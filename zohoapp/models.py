@@ -1585,6 +1585,8 @@ class setting_list(models.Model):
     pricelist=models.CharField(max_length=25,null=True,blank=True)
     offline_banking=models.CharField(max_length=25,null=True,blank=True)
     banking=models.CharField(max_length=25,null=True,blank=True)
+    bank_holders=models.CharField(max_length=25,null=True,blank=True) #added shemeem - New module development
+    loan_account=models.CharField(max_length=25,null=True,blank=True) #added shemeem - New module development
     customers=models.CharField(max_length=25,null=True,blank=True)
     estimates=models.CharField(max_length=25,null=True,blank=True)
     retainer_invoices=models.CharField(max_length=25,null=True,blank=True)
@@ -1667,3 +1669,47 @@ class cust_comment(models.Model):
     custcom = models.ForeignKey(customer,on_delete=models.CASCADE,null=True,blank=True)
     user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='') 
     comment = models.CharField(max_length=250,null=True)
+
+
+# -------------Bank Holders----------shemeem--------------------------------------
+class BankHolders(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    holder_name = models.CharField(max_length=200, null=True, blank=True)
+    alias_name = models.CharField(max_length=200, null=True, blank=True)
+    phone_number = models.BigIntegerField(null=True, blank=True)
+    email_id = models.EmailField(null=True, blank=True)
+    acc_type = models.CharField(max_length=200, null=True, blank=True, default='Bank')
+    
+    bank = models.ForeignKey(Bankcreation, on_delete=models.CASCADE,null=True, blank=True)
+    bank_name = models.CharField(max_length=200, null=True, blank=True)
+    acc_number = models.BigIntegerField(null=True, blank=True)
+    ifsc_code = models.CharField(max_length=200, null=True, blank=True)
+    swift_code = models.CharField(max_length=200, null=True, blank=True)
+    branch_name = models.CharField(max_length=200, null=True, blank=True)
+    
+    cheque_range = models.CharField(max_length=200, null=True, blank=True)
+    cheque_printing = models.CharField(max_length=200, null=True, blank=True)
+    cheque_print_config = models.CharField(max_length=200, null=True, blank=True)
+    
+    pan_number = models.CharField(max_length=200, null=True, blank=True)
+    registration_type = models.CharField(max_length=200, null=True, blank=True)
+    gstin = models.CharField(max_length=200, null=True, blank=True)
+    gst_alter = models.CharField(max_length=200, null=True, blank=True)
+
+    mail_name = models.CharField(max_length=200, null=True, blank=True)
+    mail_address = models.TextField(null=True, blank=True)
+    mail_country = models.CharField(max_length=200, null=True, blank=True)
+    mail_state = models.CharField(max_length=200, null=True, blank=True)
+    mail_pin = models.CharField(max_length=200, null=True, blank=True)
+
+    openbal_date = models.DateField(null=True, blank=True)
+    openbal_type = models.CharField(max_length=200, null=True, blank=True)
+    openbal_amount = models.CharField(max_length=200, null=True, blank=True)
+
+    status = models.CharField(max_length=15, null=True, blank=True, default='Active')
+
+
+
+
+
+# ----------------------------------end--------------------------------------------

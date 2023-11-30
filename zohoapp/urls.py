@@ -980,8 +980,22 @@ urlpatterns = [
     path('sales_order_details', views.sales_order_details, name='sales_order_details'),
     path('retainer_invoice_details', views.retainer_invoice_details, name='retainer_invoice_details'),
     path('estimate_details', views.estimate_details, name='estimate_details'),
-    path('vendor_credits_details',views.vendor_credits_details,name='vendor_credits_details'), 
+    path('vendor_credits_details',views.vendor_credits_details,name='vendor_credits_details'),
 
+    # ---------Bank Holders ------------shemeem------------------------------------------------------
+    path('bank_holders',views.bankHolders, name = 'bankHolders'),
+    path('add_bank_holder',views.addBankHolder, name='addBankHolder'),
+    path('new_bank_holder',views.newBankHolder, name='newBankHolder'),
+    path('get_bank_details',views.getBankDetails, name='getBankDetails'),
+    path('bank_holders_active',views.bankHoldersActive, name='bankHoldersActive'),
+    path('bank_holders_inactive',views.bankHoldersInactive, name='bankHoldersInactive'),
+    path('bank_holders_sortby_name',views.bankHoldersSortByName, name='bankHoldersSortByName'),
+    path('bank_holders_sortby_acc_num',views.bankHoldersSortByAccNum, name='bankHoldersSortByAccNum'),
+    
+
+
+
+    # --------------------------------------end-----------------------------------------------------
     
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

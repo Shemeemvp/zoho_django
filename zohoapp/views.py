@@ -209,7 +209,7 @@ def login(request):
             
             if not setting_list.objects.filter(user=request.user.id).exists():
                 user_id=User.objects.get(id=request.user.id)
-                settings_row=setting_list(user=user_id,items='yes',pricelist='yes',offline_banking='yes',banking='yes',customers='yes',
+                settings_row=setting_list(user=user_id,items='yes',pricelist='yes',offline_banking='yes',banking='yes',bank_holders='yes',loan_account='yes',customers='yes',
                 estimates='yes',retainer_invoices='yes',sales_orders='yes',delivery_challans='yes',invoices='yes',
                 credit_notes='yes',recurring_invoices='yes',vendors='yes',vendor_credits='yes',expenses='yes',recurring_expenses='yes',
                 purchase_orders='yes',payment_made='yes',bills='yes',recurring_bills='yes',projects='yes',chart_of_accounts='yes',
@@ -19185,6 +19185,8 @@ def edit_setting(request,pk):
     pricelist1=request.POST.get('pricelist',False)
     offlinebanking1=request.POST.get('offlinebanking',False)
     banking1=request.POST.get('banking',False)
+    bank_holders1 = request.POST.get('bank_holders',False) #added - shemeem - New Module Development
+    loan_account1 = request.POST.get('loan_account',False) #added - shemeem - New Module Development
     customer1=request.POST.get('customer',False)
     estimate1=request.POST.get('estimate',False)
     retainerinvoice1=request.POST.get('retainerinvoice',False)
@@ -19235,6 +19237,22 @@ def edit_setting(request,pk):
     else:
         x="yes"
         setting_obj.banking=x
+# ................................  
+# #added - shemeem - New Module Development
+    if not bank_holders1:
+        x="no"
+        setting_obj.bank_holders=x
+    else:
+        x="yes"
+        setting_obj.bank_holders=x
+# ................................  
+# #added - shemeem - New Module Development
+    if not loan_account1:
+        x="no"
+        setting_obj.loan_account=x
+    else:
+        x="yes"
+        setting_obj.loan_account=x
 # ................................  
     if not customer1:
         x="no"
@@ -21143,3 +21161,141 @@ def vendor_credits_details(request):
                 'recur_bill' : sorted_recur
             }
     return render(request,'vendor_credit_details.html',context)
+
+
+# ---------Bank Holders ------------shemeem------------------------------------------------------
+def bankHolders(request):
+    context = {
+        'bank_holders':BankHolders.objects.filter(user = request.user)
+    }
+    return render(request, 'bank_holders.html',context)
+
+
+def addBankHolder(request):
+    context = {
+        'banks' : Bankcreation.objects.filter(user=request.user),
+    }
+    return render(request, 'add_bank_holder.html',context)
+    
+
+def newBankHolder(request):
+    if request.user:
+        if request.method == "POST":
+            try:
+                hName = request.POST['holder_name']
+                hAliasName = request.POST['holder_alias_name']
+                hContact = request.POST['contact']
+                hEmail = request.POST['holder_email']
+                accType = request.POST['acc_type']
+                
+                bank = Bankcreation.objects.get(id = request.POST['bank_id'])
+                bName = request.POST['bank_name']
+                bAccNum = request.POST['acc_num']
+                bIFSC = request.POST['ifsc_code']
+                bSwiftCode = request.POST['swift_code']
+                bBranch = request.POST['branch_name']
+
+                chqRange = request.POST['chq_range']
+                chqPrint = request.POST['chq_print']
+                chqPrintConfig = request.POST['chq_print_config']
+
+                pan = request.POST['pan_number']
+                regType = request.POST['registration_type']
+                gstin = request.POST['gstin']
+                alterGst = request.POST['gst_alter']
+
+                mName = request.POST['mailing_name']
+                mAddress = request.POST['mailing_address']
+                mCountry = request.POST['mailing_country']
+                mState = request.POST['mailing_state']
+                mPin = request.POST['mailing_pin']
+
+                obDate = request.POST['openbal_date']
+                obType = request.POST['openbal_type']
+                obAmount = float(request.POST['openbal_amount'])
+
+                holder = BankHolders(
+                    user = User.objects.get(id = request.user.id), holder_name = hName, alias_name = hAliasName, phone_number = hContact, email_id = hEmail, acc_type = accType,
+                    bank = bank, bank_name = bName, acc_number = bAccNum, ifsc_code = bIFSC, swift_code = bSwiftCode, branch_name = bBranch,
+                    cheque_range = chqRange, cheque_printing = chqPrint, cheque_print_config = chqPrintConfig,
+                    pan_number = pan, registration_type = regType, gstin = gstin, gst_alter = alterGst,
+                    mail_name = mName, mail_address = mAddress, mail_country = mCountry, mail_state = mState, mail_pin = mPin,
+                    openbal_date = obDate, openbal_type = obType, openbal_amount = obAmount,
+                    status = 'Active',
+                )
+                holder.save()
+                return redirect(bankHolders)
+
+
+            except Exception as e:
+                print(e)
+                return redirect(addBankHolder)
+        return redirect(addBankHolder)
+    return redirect('/')
+
+
+def getBankDetails(request):
+    if request.user:
+        try:
+            bankId = request.POST.get('id')
+            bankDetails = Bankcreation.objects.get(id = int(bankId))
+            return JsonResponse({'status':True, 'acc_number':bankDetails.ac_no, 'ifsc_code':bankDetails.ifsc, 'branch_name':bankDetails.branch, 'swift_code':'Not Available'})
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status':False})
+    return redirect('/')
+
+
+def bankHoldersActive(request):
+    if request.user:
+        try:
+            context = {
+                'bank_holders':BankHolders.objects.filter(user = request.user, status = "Active")
+            }
+            return render(request, 'bank_holders.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
+
+
+def bankHoldersInactive(request):
+    if request.user:
+        try:
+            context = {
+                'bank_holders':BankHolders.objects.filter(user = request.user, status = "Inactive")
+            }
+            return render(request, 'bank_holders.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
+
+
+def bankHoldersSortByName(request):
+    if request.user:
+        try:
+            context = {
+                'bank_holders':BankHolders.objects.filter(user = request.user).order_by('holder_name')
+            }
+            return render(request, 'bank_holders.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
+
+
+def bankHoldersSortByAccNum(request):
+    if request.user:
+        try:
+            context = {
+                'bank_holders':BankHolders.objects.filter(user = request.user).order_by('acc_number')
+            }
+            return render(request, 'bank_holders.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
+
+# --------------------------------------end-----------------------------------------------------
