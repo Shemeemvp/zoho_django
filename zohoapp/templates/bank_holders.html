@@ -71,7 +71,7 @@
                     <tbody>
 
                       {% for person in bank_holders %}
-                      <tr id="over" class="clickable-row" data-href="">
+                      <tr id="over" class="clickable-row" data-href="{% url 'viewBankHolder' person.id %}">
                         <td>{{person.holder_name}}</td>
                         <td>{{person.acc_number}}</td>
                         <td>{{person.ifsc_code}}</td>

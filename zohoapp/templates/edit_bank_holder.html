@@ -12,11 +12,11 @@
 <script src="{% static 'js\country-states.js'%}"></script>
 <div class="row text-start text-uppercase">
     <div class="col-sm-12" >
-        <h3 class="mt-1">Create Bank Holder</h3>
+        <h3 class="mt-1">Edit Bank Holder</h3>
     </div>
 </div>
 
-<form action="{% url 'newBankHolder' %}" method="post" onsubmit="return validateHolderData()">
+<form action="{% url 'updateBankHolder' holder.id %}" method="post" onsubmit="return validateHolderData()">
     {% csrf_token %}
     <div class="row mt-5">
         <div class="col-sm-6" style=" border: 1px solid rgba(128, 128, 128, 0.6);">
@@ -30,32 +30,36 @@
                     <label for="">Name</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input required type="text" name="holder_name" placeholder="Full Name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
+                    <input required type="text" name="holder_name" placeholder="Full Name" value="{{holder.holder_name}}" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Alias</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input type="text" name="holder_alias_name" placeholder="Optional" class="form-control bg-light text-dark">
+                    <input type="text" name="holder_alias_name" placeholder="Optional" value="{{holder.alias_name}}" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Phone Number</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input required type="tel" name="contact" id="holder_contact" class="form-control bg-light text-dark">
+                    <input required type="tel" name="contact" id="holder_contact" value="{{holder.phone_number}}" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Mail ID</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input required type="text" name="holder_email" id="holder_email" class="form-control bg-light text-dark">
+                    <input required type="text" name="holder_email" id="holder_email" value="{{holder.email_id}}" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Account Type</label>
                 </div>
                 <div class="col-sm-8 mt-4">
                     <select name="acc_type" id="acc_type" class="form-control bg-light text-dark">
-                        <option value="Bank" selected>Bank</option> 
+                        {% if holder.acc_type == 'Bank' %}
+                        <option value="Bank" selected>Bank</option>
+                        {% else %}
+                        <option value="Bank">Bank</option>
+                        {% endif %}
                     </select>
                 </div>
                 
@@ -76,7 +80,7 @@
                     <select required name="bank_name" id="bank_name" class="form-control bg-light text-dark">
                         <option value="">Select Bank</option>
                         {% for b in banks %}
-                        <option value="{{b.name}}" text="{{b.id}}">{{b.name}}</option>
+                        {% if holder.bank_name == b.name %}<option value="{{b.name}}" text="{{b.id}}" selected>{{b.name}}</option>{% else %}<option value="{{b.name}}" text="{{b.id}}">{{b.name}}</option>{% endif %}
                         {% endfor %}
                     </select>
                     <a href="#newBank" class="btn btn-light ms-1 d-flex align-items-center" data-toggle="modal">+</a>
@@ -85,26 +89,26 @@
                     <label for="">Acc. Number</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input type="text" name="acc_num" id="accountNumber" class="form-control bg-light text-dark">
-                    <input type="number" name="bank_id" id="bankId" value="" hidden>
+                    <input type="text" name="acc_num" id="accountNumber" value="{{holder.acc_number}}" class="form-control bg-light text-dark">
+                    <input type="number" name="bank_id" id="bankId" value="{{holder.bank.id}}" hidden>
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">IFSC Code</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input type="text" name="ifsc_code" id="ifscCode" class="form-control bg-light text-dark">
+                    <input type="text" name="ifsc_code" id="ifscCode" value="{{holder.ifsc_code}}" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Swift Code</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input type="text" name="swift_code" id="swiftCode" class="form-control bg-light text-dark">
+                    <input type="text" name="swift_code" id="swiftCode" value="{{holder.swift_code}}" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Branch Name</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input type="text" name="branch_name" id="branchName" class="form-control bg-light text-dark">
+                    <input type="text" name="branch_name" id="branchName" value="{{holder.branch_name}}" class="form-control bg-light text-dark">
                 </div>
 
             </div>
@@ -160,7 +164,7 @@
                     <label for="">PAN/IT No.</label>
                 </div>
                 <div class="col-sm-7 mt-4">
-                    <input type="text" name="pan_number" id="panNumber" class="form-control bg-light text-dark">
+                    <input type="text" name="pan_number" value="{{holder.pan_number}}" id="panNumber" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-5 mt-4">
                     <label for="">Registration Type</label>
@@ -179,7 +183,7 @@
                         <label for="">GSTIN/UN No.</label>
                     </div>
                     <div class="col-sm-7 mt-4 ps-2">
-                        <input type="text" name="gstin" id="gstNumber" class="form-control bg-light text-dark">
+                        <input type="text" name="gstin" value="{{holder.gstin}}" id="gstNumber" class="form-control bg-light text-dark">
                     </div>
                 </div>
                 <div class="col-sm-5 mt-4">
@@ -205,13 +209,13 @@
                     <label for="">Mailing Name</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input type="text" name="mailing_name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
+                    <input type="text" name="mailing_name" value="{{holder.mail_name}}" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Address</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <textarea  id="mailingAddress" cols="" rows="4" name="mailing_address" class="form-control bg-light text-dark" style="height: 100px;"></textarea>
+                    <textarea  id="mailingAddress" cols="" rows="4" name="mailing_address" class="form-control bg-light text-dark" style="height: 100px;">{{holder.mail_address}}</textarea>
                 </div>
                 <div class="col-sm-4 mt-4">
                     <label for="">Country</label>
@@ -404,7 +408,7 @@
                         <option value="Russian Federation">Russian Federation</option>
                         <option value="Rwanda">Rwanda</option>
                         <option value="Saint BarthÃƒÂ©lemy">Saint BarthÃƒÂ©lemy</option>
-                        <option value="Saint Helena","Ascension and Tristan da Cunha">Saint Helena, Ascension and Tristan da Cunha</option>
+                        <option value="Saint Helena , Ascension and Tristan da Cunha">Saint Helena, Ascension and Tristan da Cunha</option>
                         <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
                         <option value="Saint Lucia">Saint Lucia</option>
                         <option value="Saint Martin (French part)">Saint Martin (French part)</option>
@@ -482,7 +486,7 @@
                     <label for="">Pin</label>
                 </div>
                 <div class="col-sm-8 mt-4">
-                    <input type="text" name="mailing_pin" id="mailingPin" class="form-control bg-light text-dark">
+                    <input type="text" name="mailing_pin" value="{{holder.mail_pin}}" id="mailingPin" class="form-control bg-light text-dark">
                 </div>
             </div>
 
@@ -496,7 +500,7 @@
                     <label for="">Date</label>
                 </div>
                 <div class="col-sm-7 mt-4">
-                    <input type="date" name="openbal_date" value="{% now 'Y-m-d' %}" class="form-control bg-light text-dark">
+                    <input type="date" name="openbal_date" value="{{holder.openbal_date|date:'Y-m-d'}}" class="form-control bg-light text-dark">
                 </div>
                 <div class="col-sm-5 mt-4">
                     <label for="">Amount</label>
@@ -506,7 +510,7 @@
                         <option value="Debit">Debit</option> 
                         <option value="Credit">Credit</option>
                     </select>
-                    <input type="number" name="openbal_amount" id="openbalAmount" class="form-control bg-light text-dark ms-1">
+                    <input type="number" name="openbal_amount" value="{{holder.openbal_amount}}" id="openbalAmount" class="form-control bg-light text-dark ms-1">
                 </div>
             </div>
 
@@ -523,8 +527,8 @@
 
     <div class="row mt-5">
         <div class="col-sm-12" style="text-align: center;">
-            <input type="reset" style="width: 200px; height: 50px;" onclick="window.location.href=`{% url 'bankHolders' %}`" class="btn btn-warning" value="CANCEL">
-            <input type="submit" style="width: 200px; height: 50px;"  class="btn btn-success" value="SUBMIT">
+            <input type="reset" style="width: 200px; height: 50px;" onclick="window.location.href=`{% url 'viewBankHolder' holder.id %}`" class="btn btn-warning" value="CANCEL">
+            <input type="submit" style="width: 200px; height: 50px;"  class="btn btn-success" value="SAVE">
         </div>
     </div>
 </form>
@@ -618,7 +622,7 @@
 
 <script>
     // user country code for selected option
-    var user_country_code = "IN";
+    var user_country_code = `{{holder.mail_country}}`;
 
     (() => {
         // script https://www.html-code-generator.com/html/drop-down/state-name
@@ -898,6 +902,33 @@
             console.error(xhr.responseText);
             }
         });
+    }
+
+    window.onload = function(){
+        const $chqRngSelect = document.querySelector('#chqRange');
+        $chqRngSelect.value = `{{holder.cheque_range}}`
+
+        const $chqPrntSelect = document.querySelector('#chqPrint');
+        $chqPrntSelect.value = `{{holder.cheque_printing}}`
+
+        const $chqPrntCnfgSelect = document.querySelector('#chqPrintConfig');
+        $chqPrntCnfgSelect.value = `{{holder.cheque_print_config}}`
+
+        const $altGst = document.querySelector('#gstAlter');
+        $altGst.value = `{{holder.gst_alter}}`
+
+        const $op_bal_type = document.querySelector('#openbalType');
+        $op_bal_type.value = `{{holder.openbal_type}}`
+
+        const $reg_type = document.querySelector('#regType');
+        $reg_type.value = `{{holder.registration_type}}`
+
+        const $mail_cntry = document.querySelector('#mailingCountry');
+        $mail_cntry.value = `{{holder.mail_country}}`
+
+        const $mail_state = document.querySelector('#mailingState');
+        $mail_state.value = `{{holder.mail_state}}`
+
     }
 </script>
 {% endblock %}

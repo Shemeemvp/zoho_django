@@ -1704,7 +1704,7 @@ class BankHolders(models.Model):
 
     openbal_date = models.DateField(null=True, blank=True)
     openbal_type = models.CharField(max_length=200, null=True, blank=True)
-    openbal_amount = models.CharField(max_length=200, null=True, blank=True)
+    openbal_amount = models.FloatField(null=True, blank=True,default=0.0)
 
     status = models.CharField(max_length=15, null=True, blank=True, default='Active')
 

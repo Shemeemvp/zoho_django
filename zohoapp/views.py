@@ -21239,7 +21239,7 @@ def getBankDetails(request):
         try:
             bankId = request.POST.get('id')
             bankDetails = Bankcreation.objects.get(id = int(bankId))
-            return JsonResponse({'status':True, 'acc_number':bankDetails.ac_no, 'ifsc_code':bankDetails.ifsc, 'branch_name':bankDetails.branch, 'swift_code':'Not Available'})
+            return JsonResponse({'status':True, 'id':bankDetails.id, 'acc_number':bankDetails.ac_no, 'ifsc_code':bankDetails.ifsc, 'branch_name':bankDetails.branch, 'swift_code':'Not Available'})
 
         except Exception as e:
             print(e)
@@ -21298,4 +21298,153 @@ def bankHoldersSortByAccNum(request):
             return redirect(bankHolders)
     return redirect('/')
 
+
+def getAllBanks(request):
+    if request.user:
+        try:
+            list = []
+            banks = Bankcreation.objects.filter(user = request.user)
+
+            for item in banks:
+                bankDetails = {
+                    "id": item.id,
+                    "name": item.name,
+                }
+                list.append(bankDetails)
+
+            # print(list)
+            return JsonResponse({"banks": list}, safe=False)
+        except Exception as e:
+            print(e)
+            return JsonResponse({"message": "failed"})
+    else:
+        return JsonResponse({"message": "failed"})
+
+
+def bankHolderStatusInactive(request,id):
+    if request.user:
+        bank_holder = BankHolders.objects.get(id = id)
+        bank_holder.status = 'Inactive'
+        bank_holder.save()
+        print('Invactive==')
+        return redirect(viewBankHolder,id)
+    return redirect('/')
+
+
+def bankHolderStatusActive(request,id):
+    if request.user:
+        bank_holder = BankHolders.objects.get(id = id)
+        bank_holder.status = 'Active'
+        bank_holder.save()
+        print('Active==')
+        return redirect(viewBankHolder,id)
+    return redirect('/')
+
+
+def deleteBankHolder(request, id):
+    if request.user:
+        bank_holder = BankHolders.objects.get(id = id)
+        bank_holder.delete()
+        return redirect(bankHolders)
+    return redirect('/')
+
+
+def editBankHolder(request,id):
+    if request.user:
+        context = {
+            'holder':BankHolders.objects.get(id = id),
+            'banks' : Bankcreation.objects.filter(user=request.user),
+        }
+        return render(request,'edit_bank_holder.html',context)
+    return redirect('/')
+
+
+def updateBankHolder(request,id):
+    if request.user:
+        if request.method == "POST":
+            try:
+                holder = BankHolders.objects.get(id = id)
+
+                hName = request.POST['holder_name']
+                hAliasName = request.POST['holder_alias_name']
+                hContact = request.POST['contact']
+                hEmail = request.POST['holder_email']
+                accType = request.POST['acc_type']
+                
+                bank = Bankcreation.objects.get(id = request.POST['bank_id'])
+                bName = request.POST['bank_name']
+                bAccNum = request.POST['acc_num']
+                bIFSC = request.POST['ifsc_code']
+                bSwiftCode = request.POST['swift_code']
+                bBranch = request.POST['branch_name']
+
+                chqRange = request.POST['chq_range']
+                chqPrint = request.POST['chq_print']
+                chqPrintConfig = request.POST['chq_print_config']
+
+                pan = request.POST['pan_number']
+                regType = request.POST['registration_type']
+                gstin = "" if request.POST['gstin'] != 'Regular' or request.POST['gstin'] != 'Composition' else request.POST['gstin']
+                alterGst = request.POST['gst_alter']
+
+                mName = request.POST['mailing_name']
+                mAddress = request.POST['mailing_address']
+                mCountry = request.POST['mailing_country']
+                mState = request.POST['mailing_state']
+                mPin = request.POST['mailing_pin']
+
+                obDate = request.POST['openbal_date']
+                obType = request.POST['openbal_type']
+                obAmount = float(request.POST['openbal_amount'])
+
+                holder.holder_name = hName 
+                holder.alias_name = hAliasName
+                holder.phone_number = hContact
+                holder.email_id = hEmail
+                holder.acc_type = accType
+                holder.bank = bank
+                holder.bank_name = bName
+                holder.acc_number = bAccNum
+                holder.ifsc_code = bIFSC
+                holder.swift_code = bSwiftCode
+                holder.branch_name = bBranch
+                holder.cheque_range = chqRange
+                holder.cheque_printing = chqPrint
+                holder.cheque_print_config = chqPrintConfig
+                holder.pan_number = pan
+                holder.registration_type = regType
+                holder.gstin = gstin
+                holder.gst_alter = alterGst
+                holder.mail_name = mName
+                holder.mail_address = mAddress
+                holder.mail_country = mCountry
+                holder.mail_state = mState
+                holder.mail_pin = mPin
+                holder.openbal_date = obDate
+                holder.openbal_type = obType
+                holder.openbal_amount = obAmount
+                
+                holder.save()
+                return redirect(viewBankHolder,id)
+
+
+            except Exception as e:
+                print(e)
+                return redirect(editBankHolder,id)
+        return redirect(editBankHolder,id)
+    return redirect('/')
+
+
+def viewBankHolder(request, id):
+    if request.user:
+        try:
+            context = {
+                'holder': BankHolders.objects.get(id = id),
+                'all_bank_holders': BankHolders.objects.filter(user = request.user),
+            }
+            return render(request, 'view_bank_holder.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
 # --------------------------------------end-----------------------------------------------------

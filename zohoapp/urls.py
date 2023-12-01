@@ -987,10 +987,17 @@ urlpatterns = [
     path('add_bank_holder',views.addBankHolder, name='addBankHolder'),
     path('new_bank_holder',views.newBankHolder, name='newBankHolder'),
     path('get_bank_details',views.getBankDetails, name='getBankDetails'),
+    path('get_all_banks',views.getAllBanks, name='getAllBanks'),
     path('bank_holders_active',views.bankHoldersActive, name='bankHoldersActive'),
     path('bank_holders_inactive',views.bankHoldersInactive, name='bankHoldersInactive'),
     path('bank_holders_sortby_name',views.bankHoldersSortByName, name='bankHoldersSortByName'),
     path('bank_holders_sortby_acc_num',views.bankHoldersSortByAccNum, name='bankHoldersSortByAccNum'),
+    path('bank_holder_change_inactive/<int:id>',views.bankHolderStatusInactive, name='bankHolderStatusInactive'),
+    path('bank_holder_change_active/<int:id>',views.bankHolderStatusActive, name='bankHolderStatusActive'),
+    path('delete_bank_holder/<int:id>',views.deleteBankHolder, name='deleteBankHolder'),
+    path('edit_bank_holder/<int:id>',views.editBankHolder, name='editBankHolder'),
+    path('update_bank_holder/<int:id>',views.updateBankHolder, name='updateBankHolder'),
+    path('view_bank_holder/<int:id>',views.viewBankHolder, name='viewBankHolder'),
     
 
 
