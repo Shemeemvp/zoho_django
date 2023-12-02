@@ -650,38 +650,14 @@
                                         </span>
                                     </a>
                                 </div>
-                                {% else %}
-                                <div class="dropdown-item" style="display: none;">
-                                    <a class="d-inline-block" style="color: #ffffff"
-                                        href="{% url 'bankHolders' %}">Bank Holders</a>
-                                    <a class="d-inline-block" style="color: #000000;margin-left: 2px;"
-                                        href="{% url 'addBankHolder' %}">
-                                        <span class="icon bg-light rounded-circle"
-                                            style="text-align: right; width: 25px;">
-                                            <i class="mdi mdi-plus"></i>
-                                        </span>
-                                    </a>
-                                </div>
                                 {% endif %}
 
                                 {% if setting_variable.loan_account == "yes" %}
                                 <div class="dropdown-item">
                                     <a class="d-inline-block" style="color: #ffffff"
-                                        href="{% url 'bankHolders' %}">Loan Account</a>
+                                        href="{% url 'loanAccounts' %}">Loan Account</a>
                                     <a class="d-inline-block" style="color: #000000;margin-left: 2px;"
-                                        href="{% url 'create_bank' %}">
-                                        <span class="icon bg-light rounded-circle"
-                                            style="text-align: right; width: 25px;">
-                                            <i class="mdi mdi-plus"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                                {% else %}
-                                <div class="dropdown-item" style="display: none;">
-                                    <a class="d-inline-block" style="color: #ffffff"
-                                        href="{% url 'bankHolders' %}">Loan Account</a>
-                                    <a class="d-inline-block" style="color: #000000;margin-left: 2px;"
-                                        href="{% url 'create_bank' %}">
+                                        href="{% url 'addLoanAccount' %}">
                                         <span class="icon bg-light rounded-circle"
                                             style="text-align: right; width: 25px;">
                                             <i class="mdi mdi-plus"></i>

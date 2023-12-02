@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-
 <style>
   #over:hover{
         background-color: rgba(110, 110, 110, 0.616);
@@ -10,7 +9,7 @@
 </style>
 
   <div  style="top: 7rem;" >
-    <div class="pb-4"><a class="text-white" style="font-size: 2rem;">Bank Account Holders</a></div>
+    <div class="pb-4"><a class="text-white" style="font-size: 2rem;">Loan Accounts</a></div>
     <div class="row mb-4">
       <div class=" col-md-3 d-flex justify-content-between align-items-center">
               <input type="text" id="search" placeholder="Search..." class="form-control text-dark bg-light" autocomplete="off">
@@ -22,15 +21,12 @@
               <div class="dropdown-menu ">
                   <a class="dropdown-item text-white" href="{% url 'bankHolders' %}">All</a>
                   <a class="dropdown-item text-white" href="{% url 'bankHoldersSortByName' %}">Holder Name</a>
-                  <a class="dropdown-item text-white" href="{% url 'bankHoldersSortByAccNum' %}">Acc. Number</a>
+                  <a class="dropdown-item text-white" href="{% url 'bankHoldersSortByAccNum' %}">Loan Amount</a>
               </div>
       </div>
       <div class="col-md-5"></div>
       <div class="col-md-4 d-flex justify-content-end">
-
-        <a class="btn text-center px-4 pt-2 btn-outline-warning" title="SORT" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-        role="button" ><i class="fa fa-filter"></i>
-        </a>
+        <a class="btn text-center px-4 pt-2 btn-outline-warning" title="SORT" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button" ><i class="fa fa-filter"></i></a>
         <div class="dropdown-menu ">
             <a class="dropdown-item text-white" href="{% url 'bankHolders' %}">All</a>
             <a class="dropdown-item text-white" href="{% url 'bankHoldersActive' %}">Active</a>
@@ -42,7 +38,7 @@
         <a href="#" class="btn btn-outline-warning px-3 py-2" onclick="exportToExcel('xlsx')" title="EXPORT" role="button" style="margin-left: 5px;">
             <i class="fas fa-file-excel"></i>
         </a>
-        <a href="{% url 'addBankHolder' %}" class="btn btn-outline-warning fa fa-plus text-right px-3 py-2" role="button" style="margin-left: 5px;">
+        <a href="{% url 'addLoanAccount' %}" class="btn btn-outline-warning fa fa-plus text-right px-3 py-2" role="button" style="margin-left: 5px;">
             <span class="mt-2">&nbsp;&nbsp;New</span>
         </a>
       </div>
@@ -57,26 +53,26 @@
         <div class="row">
             <div class="col-sm-12 ">
               <div style="width: 100%; overflow-x: auto;">
-                <table class="table  text-white" id="bankHoldersTable" >
+                <table class="table  text-white" id="loanAccountsTable" >
                     <thead>
                       <tr>
+                        <th>Date</th>
                         <th>Holder Name</th>
                         <th>Acc. Number</th>
-                        <th>IFSC Code</th>
-                        <th>BANK Name</th>
-                        <th>Branch Name</th>
+                        <th>Loan Amount</th>
+                        <th>Balance</th>
                         <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
 
-                      {% for person in bank_holders %}
-                      <tr id="over" class="clickable-row" data-href="{% url 'viewBankHolder' person.id %}">
-                        <td>{{person.holder_name}}</td>
+                      {% for person in loan_accounts %}
+                      <tr id="over" class="clickable-row" data-href="">
+                        <td>{{person.loan_date}}</td>
+                        <td>{{person.acc_name}}</td>
                         <td>{{person.acc_number}}</td>
-                        <td>{{person.ifsc_code}}</td>
-                        <td>{{person.bank_name}}</td>
-                        <td>{{person.branch_name}}</td>
+                        <td>{{person.loan_amount}}</td>
+                        <td>{{person.balance}}</td>
                         <td>{{person.status}}</td>
                       </tr>
                       {% endfor %}
@@ -103,7 +99,7 @@
   $(document).ready(function () {
     $("#search").on("keyup", function () {
       var value = $(this).val().toLowerCase();
-      $("#bankHoldersTable tr").filter(function () {
+      $("#loanAccountsTable tr").filter(function () {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
       });
     });
@@ -122,9 +118,9 @@
 
 
     function exportToExcel(type, fn, dl) {
-        var elt = document.getElementById('bankHoldersTable');
+        var elt = document.getElementById('loanAccountsTable');
         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-        return dl ? XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) : XLSX.writeFile(wb, fn || ('Bank_Holders.' + (type || 'xlsx')));
+        return dl ? XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) : XLSX.writeFile(wb, fn || ('Loan_Accounts.' + (type || 'xlsx')));
     }
 </script>
 

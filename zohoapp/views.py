@@ -21163,20 +21163,23 @@ def vendor_credits_details(request):
     return render(request,'vendor_credit_details.html',context)
 
 
-# ---------Bank Holders ------------shemeem------------------------------------------------------
+# ---------Bank Holders & Loan account ------------shemeem------------------------------------------------------
 def bankHolders(request):
-    context = {
-        'bank_holders':BankHolders.objects.filter(user = request.user)
-    }
-    return render(request, 'bank_holders.html',context)
-
+    if request.user:
+        context = {
+            'bank_holders':BankHolders.objects.filter(user = request.user)
+        }
+        return render(request, 'bank_holders.html',context)
+    return redirect('/')
 
 def addBankHolder(request):
-    context = {
-        'banks' : Bankcreation.objects.filter(user=request.user),
-    }
-    return render(request, 'add_bank_holder.html',context)
-    
+    if request.user:
+        context = {
+            'banks' : Bankcreation.objects.filter(user=request.user),
+        }
+        return render(request, 'add_bank_holder.html',context)
+    else:
+        return redirect('/')
 
 def newBankHolder(request):
     if request.user:
@@ -21384,7 +21387,7 @@ def updateBankHolder(request,id):
 
                 pan = request.POST['pan_number']
                 regType = request.POST['registration_type']
-                gstin = "" if request.POST['gstin'] != 'Regular' or request.POST['gstin'] != 'Composition' else request.POST['gstin']
+                gstin = "" if request.POST['registration_type'] != 'Regular' and request.POST['registration_type'] != 'Composition' else request.POST['gstin']
                 alterGst = request.POST['gst_alter']
 
                 mName = request.POST['mailing_name']
@@ -21447,4 +21450,93 @@ def viewBankHolder(request, id):
             print(e)
             return redirect(bankHolders)
     return redirect('/')
+
+
+#---------Loan Account views--------
+
+def loanAccounts(request):
+    if request.user:
+        context = {
+            'loan_accounts':LoanAccounts.objects.filter(user = request.user)
+        }
+        return render(request, 'loan_accounts.html',context)
+    return redirect('/')
+
+
+def addLoanAccount(request):
+    if request.user:
+        context = {
+            'banks' : Bankcreation.objects.filter(user=request.user),
+            'bankHolders':BankHolders.objects.filter(user = request.user),
+        }
+        return render(request, 'add_loan_account.html',context)
+    else:
+        return redirect('/')
+
+
+def getHolderDetails(request):
+    if request.user:
+        try:
+            holderId = request.POST.get('id')
+            holderDetails = BankHolders.objects.get(id = int(holderId))
+            return JsonResponse({'status':True, 'id':holderDetails.id, 'acc_number':holderDetails.acc_number})
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status':False})
+    return redirect('/')
+
+
+def createLoanAccount(request):
+    if request.user:
+        try:
+            if request.method == 'POST':
+                if not LoanAccounts.objects.filter(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name'])).exists():
+                    holder = BankHolders.objects.get(id = request.POST['acc_name'])
+                    acc_name = holder.holder_name
+                    acc_number = request.POST['loan_acc_number']
+                    lender_bank = request.POST['lender_bank']
+                    loan_amount = float(request.POST['loan_amount'])
+                    desc = request.POST['description']
+                    amt_rcvd = request.POST['amount_received_in']
+                    amt_rcvd_acc_num = request.POST['amt_rcvd_acc_num']
+                    amt_rcvd_upi_id = request.POST['amt_rcvd_upi_id']
+                    amt_rcvd_cheque_id = request.POST['amt_rcvd_cheque_id']
+
+                    loan_date = request.POST['loan_date']
+                    interest = float(request.POST['interest_amount'])
+                    terms = int(request.POST['terms_duration'])
+
+                    procs_fee = float(request.POST['procs_fee'])
+                    procs_fee_paid_from = request.POST['procs_fee_received_from']
+                    procs_fee_acc_num = request.POST['procs_fee_acc_num']
+                    procs_fee_upi_id = request.POST['procs_fee_upi_id']
+                    procs_fee_cheque_id = request.POST['procs_fee_cheque_id']
+
+                    # bal = loan_amount+interest
+                    status = 'Active'
+
+                    account = LoanAccounts(
+                        user = User.objects.get(id = request.user.id),holder = holder,acc_name = acc_name, acc_number = acc_number, lender_bank = lender_bank, description = desc,
+                        loan_amount = loan_amount,balance = loan_amount, loan_date = loan_date, amount_received = amt_rcvd ,amt_rcvd_cheque_id = amt_rcvd_cheque_id, amt_rcvd_upi_id = amt_rcvd_upi_id, amt_rcvd_bank_acc_number = amt_rcvd_acc_num,
+                        interest = interest,term_duration = terms, procs_fee = procs_fee,procs_fee_paid_form = procs_fee_paid_from,procs_fee_cheque_id = procs_fee_cheque_id,procs_fee_upi_id = procs_fee_upi_id,procs_fee_bank_acc_number = procs_fee_acc_num, status = status,
+                    )
+
+                    account.save()
+
+                    #Transaction
+
+
+                    return redirect(loanAccounts)
+                else:
+                    print('already exists')
+                    return redirect(loanAccounts)
+        except Exception as e:
+            print(e)
+            return redirect(addLoanAccount)
+    return redirect('/')
+
+
+
+
 # --------------------------------------end-----------------------------------------------------

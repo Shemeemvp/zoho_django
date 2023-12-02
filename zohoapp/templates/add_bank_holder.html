@@ -516,15 +516,15 @@
         <div class="col">
             <div class="form-group d-flex align-items-center">
                 <input type="checkbox" name="terms" id="agreeTerms" required>
-                <label for="" class="ms-2">Agree Terms & Conditions</label>
+                <label for="agreeTerms" class="ms-2">Agree Terms & Conditions</label>
             </div>
         </div>
     </div>
 
     <div class="row mt-5">
         <div class="col-sm-12" style="text-align: center;">
-            <input type="reset" style="width: 200px; height: 50px;" onclick="window.location.href=`{% url 'bankHolders' %}`" class="btn btn-warning" value="CANCEL">
-            <input type="submit" style="width: 200px; height: 50px;"  class="btn btn-success" value="SUBMIT">
+            <input type="reset" style="width: 150px; height: 40px;" onclick="window.location.href=`{% url 'bankHolders' %}`" class="btn btn-outline-primary" value="CANCEL">
+            <input type="submit" style="width: 150px; height: 40px;"  class="btn btn-success" value="SUBMIT">
         </div>
     </div>
 </form>

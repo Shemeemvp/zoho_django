@@ -982,7 +982,7 @@ urlpatterns = [
     path('estimate_details', views.estimate_details, name='estimate_details'),
     path('vendor_credits_details',views.vendor_credits_details,name='vendor_credits_details'),
 
-    # ---------Bank Holders ------------shemeem------------------------------------------------------
+    # ---------Bank Holders & Loan account ------------shemeem------------------------------------------------------
     path('bank_holders',views.bankHolders, name = 'bankHolders'),
     path('add_bank_holder',views.addBankHolder, name='addBankHolder'),
     path('new_bank_holder',views.newBankHolder, name='newBankHolder'),
@@ -999,6 +999,10 @@ urlpatterns = [
     path('update_bank_holder/<int:id>',views.updateBankHolder, name='updateBankHolder'),
     path('view_bank_holder/<int:id>',views.viewBankHolder, name='viewBankHolder'),
     
+    path('loan_accounts',views.loanAccounts,name='loanAccounts'),
+    path('add_loan_account',views.addLoanAccount,name='addLoanAccount'),
+    path('get_holder_details',views.getHolderDetails, name='getHolderDetails'),
+    path('create_loan_account',views.createLoanAccount, name='createLoanAccount'),
 
 
 

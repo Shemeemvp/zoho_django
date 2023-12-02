@@ -1671,7 +1671,7 @@ class cust_comment(models.Model):
     comment = models.CharField(max_length=250,null=True)
 
 
-# -------------Bank Holders----------shemeem--------------------------------------
+# -------------Bank Holders & Loan Accounts----------shemeem--------------------------------------
 class BankHolders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     holder_name = models.CharField(max_length=200, null=True, blank=True)
@@ -1709,6 +1709,28 @@ class BankHolders(models.Model):
     status = models.CharField(max_length=15, null=True, blank=True, default='Active')
 
 
+class LoanAccounts(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    holder = models.ForeignKey(BankHolders, on_delete=models.CASCADE, null=True, blank=True)
+    acc_name = models.CharField(max_length=200, null=True, blank=True)
+    acc_number = models.BigIntegerField(null=True, blank=True)
+    lender_bank = models.CharField(max_length=200, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    loan_amount = models.FloatField(null=True, blank=True,default=0.0)
+    balance = models.FloatField(null=True, blank=True, default=0.0)
+    loan_date = models.DateField(null=True, blank=True)
+    amount_received = models.CharField(max_length=200, null=True, blank=True)
+    amt_rcvd_cheque_id = models.CharField(max_length=200, null=True, blank=True)
+    amt_rcvd_upi_id = models.CharField(max_length=200, null=True, blank=True)
+    amt_rcvd_bank_acc_number = models.BigIntegerField(null=True, blank=True)
+    interest = models.FloatField(null=True, blank=True, default=0.0)
+    term_duration = models.IntegerField(null=True, blank=True,default=0)
+    procs_fee = models.FloatField(null=True, blank=True,default=0.0)
+    procs_fee_paid_form = models.CharField(max_length=200, null=True, blank=True)
+    procs_fee_cheque_id = models.CharField(max_length=200, null=True, blank=True)
+    procs_fee_upi_id = models.CharField(max_length=200, null=True, blank=True)
+    procs_fee_bank_acc_number = models.BigIntegerField(null=True, blank=True)
+    status = models.CharField(max_length=200, null=True, default='Active')
 
 
 
