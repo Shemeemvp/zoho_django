@@ -1726,11 +1726,21 @@ class LoanAccounts(models.Model):
     interest = models.FloatField(null=True, blank=True, default=0.0)
     term_duration = models.IntegerField(null=True, blank=True,default=0)
     procs_fee = models.FloatField(null=True, blank=True,default=0.0)
-    procs_fee_paid_form = models.CharField(max_length=200, null=True, blank=True)
+    procs_fee_paid_from = models.CharField(max_length=200, null=True, blank=True)
     procs_fee_cheque_id = models.CharField(max_length=200, null=True, blank=True)
     procs_fee_upi_id = models.CharField(max_length=200, null=True, blank=True)
     procs_fee_bank_acc_number = models.BigIntegerField(null=True, blank=True)
     status = models.CharField(max_length=200, null=True, default='Active')
+
+
+class LoanAccountTransactions(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null = True)
+    loan_account = models.ForeignKey(LoanAccounts, on_delete=models.CASCADE, null=True)
+    type = models.CharField(max_length=150,null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    principal = models.FloatField(null=True, blank=True, default=0.0)
+    interest = models.FloatField(null=True, blank=True, default=0.0)
+    total = models.FloatField(null=True, blank=True, default=0.0)
 
 
 

@@ -998,11 +998,29 @@ urlpatterns = [
     path('edit_bank_holder/<int:id>',views.editBankHolder, name='editBankHolder'),
     path('update_bank_holder/<int:id>',views.updateBankHolder, name='updateBankHolder'),
     path('view_bank_holder/<int:id>',views.viewBankHolder, name='viewBankHolder'),
+    path('holder_name_asc/<int:id>',views.holderNameAsc, name='holderNameAsc'),
+    path('holder_name_desc/<int:id>',views.holderNameDesc, name='holderNameDesc'),
     
+    # Loan Account urls
     path('loan_accounts',views.loanAccounts,name='loanAccounts'),
     path('add_loan_account',views.addLoanAccount,name='addLoanAccount'),
     path('get_holder_details',views.getHolderDetails, name='getHolderDetails'),
     path('create_loan_account',views.createLoanAccount, name='createLoanAccount'),
+    path('view_loan_account/<int:id>',views.viewLoanAccount, name= 'viewLoanAccount'),
+    path('delete_loan_account/<int:id>',views.deleteLoanAccount, name='deleteLoanAccount'),
+    path('edit_loan_account/<int:id>',views.editLoanAccount, name='editLoanAccount'),
+    path('update_loan_account/<int:id>',views.updateLoanAccount,name='updateLoanAccount'),
+    path('loan_account_active',views.loanAccountActive, name='loanAccountActive'),
+    path('loan_account_inactive',views.loanAccountInactive, name='loanAccountInactive'),
+    path('loan_account_sortby_name',views.loanAccountSortByName, name='loanAccountSortByName'),
+    path('loan_account_sortby_amount',views.loanAccountSortByAmount, name='loanAccountSortByAmount'),
+    path('loan_account_change_inactive/<int:id>',views.loanAccountStatusInactive, name='loanAccountStatusInactive'),
+    path('loan_account_change_active/<int:id>',views.loanAccountStatusActive, name='loanAccountStatusActive'),
+    path('loan_account_name_asc/<int:id>',views.loanAccountNameAsc, name='loanAccountNameAsc'),
+    path('loan_account_name_desc/<int:id>',views.loanAccountNameDesc, name='loanAccountNameDesc'),
+    path('edit_loan_account_transaction/<int:id>',views.editLoanAccountTransaction, name='editLoanAccountTransaction'),
+    path('update_loan_account_transaction/<int:id>',views.updateLoanAccountTransaction, name='updateLoanAccountTransaction'),
+    path('delete_loan_account_transaction/<int:id>',views.deleteLoanAccountTransaction, name='deleteLoanAccountTransaction'),
 
 
 

@@ -65,8 +65,8 @@
                 <div class="col-md-4 d-flex justify-content-end align-items-center">
                     <a class="btn btn-primary mx-1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button"><i class="fa fa-filter mt-0 mx-1 "></i></a>
                     <div class="dropdown-menu ">
-                        <a class="dropdown-item text-white" href="">Name A-Z</a>
-                        <a class="dropdown-item text-white" href="">Name Z-A</a>
+                        <a class="dropdown-item text-white" href="{% url 'holderNameAsc' holder.id %}">Name A-Z</a>
+                        <a class="dropdown-item text-white" href="{% url 'holderNameDesc' holder.id %}">Name Z-A</a>
                     </div>
                     <a class="btn btn-primary mr-1" role="button" href="{%url 'newBankHolder'%}"><i class="fa fa-plus"></i>
                         <span class="mt-2"></span>

@@ -12,11 +12,11 @@
 <script src="{% static 'js\country-states.js'%}"></script>
 <div class="row text-start text-uppercase">
     <div class="col-sm-12" >
-        <h3 class="mt-1">Create Loan Account</h3>
+        <h3 class="mt-1">Edit Loan Account</h3>
     </div>
 </div>
 
-<form action="{% url 'createLoanAccount' %}" method="post">
+<form action="{% url 'updateLoanAccount' account.id %}" method="post">
     {% csrf_token %}
     <div class="row mt-5">
         <div class="col-sm-6">
@@ -36,7 +36,7 @@
         <div class="col-sm-6">
             <div class="from-group">
                 <label for="">Account Number</label>
-                <input class="form-control text-dark" type="text" name="loan_acc_number" id="loanAccountNumber" readonly>
+                <input class="form-control text-dark" type="text" value="{{account.acc_number}}" name="loan_acc_number" id="loanAccountNumber" readonly>
             </div>
         </div>
     </div>
@@ -45,17 +45,17 @@
         <div class="col-sm-6">
             <div class="from-group">
                 <label for="">Lender Bank</label>
-                <input class="form-control text-dark" type="text" name="lender_bank" id="lenderBank">
+                <input class="form-control text-dark" type="text" value="{{account.lender_bank}}" name="lender_bank" id="lenderBank">
             </div>
             <div class="from-group mt-2">
                 <label for="">Loan Amount</label>
-                <input class="form-control text-dark" type="number" min="0" step="any" name="loan_amount" id="loanAmount">
+                <input class="form-control text-dark" type="number" min="0" value="{{account.loan_amount}}" step="any" name="loan_amount" id="loanAmount">
             </div>
         </div>
         <div class="col-sm-6">
             <div class="from-group">
                 <label for="">Description</label>
-                <textarea name="description" class="form-control text-dark" id="description" cols="" rows="4" placeholder="Loan account description.." style="height: 110px;"></textarea>
+                <textarea name="description" class="form-control text-dark" id="description" cols="" rows="4" placeholder="Loan account description.." style="height: 110px;">{{account.description}}</textarea>
             </div>
         </div>
     </div>
@@ -75,21 +75,21 @@
             </div>
             <div class="from-group mt-2 amountReceivedInputs" id="amtRcvdAccNum" style="display: none;">
                 <label for="">Account #</label>
-                <input class="form-control text-dark" type="number" name="amt_rcvd_acc_num" id="amt_rcvd_acc_num" readonly>
+                <input class="form-control text-dark" value="{{account.amt_rcvd_bank_acc_number}}" type="number" name="amt_rcvd_acc_num" id="amt_rcvd_acc_num" readonly>
             </div>
             <div class="from-group mt-2 amountReceivedInputs" id="amtRcvdUPI" style="display: none;">
                 <label for="">UPI ID</label>
-                <input class="form-control text-dark" type="text" name="amt_rcvd_upi_id">
+                <input class="form-control text-dark" value="{{account.amt_rcvd_upi_id}}" type="text" name="amt_rcvd_upi_id">
             </div>
             <div class="from-group mt-2 amountReceivedInputs" id="amtRcvdChequeID" style="display: none;">
                 <label for="">Cheque ID</label>
-                <input class="form-control text-dark" type="text" name="amt_rcvd_cheque_id">
+                <input class="form-control text-dark" value="{{account.amt_rcvd_bank_cheque_id}}" type="text" name="amt_rcvd_cheque_id">
             </div>
         </div>
         <div class="col-sm-6">
             <div class="from-group">
                 <label for="">Loan Date</label>
-                <input class="form-control text-dark" type="date" value="{% now 'Y-m-d' %}" name="loan_date" id="loanDate">
+                <input class="form-control text-dark" type="date"  value="{{account.loan_date|date:'Y-m-d'}}" name="loan_date" id="loanDate">
             </div>
         </div>
     </div>
@@ -98,13 +98,13 @@
         <div class="col-sm-6">
             <div class="from-group">
                 <label for="">Interest</label>
-                <input class="form-control text-dark" type="number" min="0" step="any" name="interest_amount" id="interestAmount">
+                <input class="form-control text-dark" value="{{account.interest}}" type="number" min="0" step="any" name="interest_amount" id="interestAmount">
             </div>
         </div>
         <div class="col-sm-6">
             <div class="from-group">
                 <label for="">Terms Duration</label>
-                <input class="form-control text-dark" type="number" placeholder="Duration in months" name="terms_duration" id="termsDuration">
+                <input class="form-control text-dark" value="{{account.term_duration}}" type="number" placeholder="Duration in months" name="terms_duration" id="termsDuration">
             </div>
         </div>
     </div>
@@ -113,7 +113,7 @@
         <div class="col-sm-6">
             <div class="from-group">
                 <label for="">Processing Fee</label>
-                <input class="form-control text-dark" type="number" min="0" step="any" name="procs_fee" id="procsFee">
+                <input class="form-control text-dark" value="{{account.procs_fee}}" type="number" min="0" step="any" name="procs_fee" id="procsFee">
             </div>
         </div>
         <div class="col-sm-6">
@@ -130,15 +130,15 @@
             </div>
             <div class="from-group mt-2 procsFeeReceivedInputs" id="procsFeeAccNum" style="display: none;">
                 <label for="">Account #</label>
-                <input class="form-control text-dark" type="number" name="procs_fee_acc_num" id="procs_fee_acc_num" readonly>
+                <input class="form-control text-dark" value="{{account.procs_fee_bank_acc_number}}" type="number" name="procs_fee_acc_num" id="procs_fee_acc_num" readonly>
             </div>
             <div class="from-group mt-2 procsFeeReceivedInputs" id="procsFeeUPI" style="display: none;">
                 <label for="">UPI ID</label>
-                <input class="form-control text-dark" type="text" name="procs_fee_upi_id">
+                <input class="form-control text-dark" value="{{account.procs_fee_upi_id}}" type="text" name="procs_fee_upi_id">
             </div>
             <div class="from-group mt-2 procsFeeReceivedInputs" id="procsFeeChequeID" style="display: none;">
                 <label for="">Cheque ID</label>
-                <input class="form-control text-dark" type="text" name="procs_fee_cheque_id">
+                <input class="form-control text-dark" value="{{account.procs_fee_cheque_id}}" type="text" name="procs_fee_cheque_id">
             </div>
         </div>
     </div>
@@ -148,7 +148,7 @@
 
     <div class="row mt-5">
         <div class="col-sm-12" style="text-align: center;">
-            <input type="reset" style="width: 150px; height: 40px;" onclick="window.location.href=`{% url 'loanAccounts' %}`" class="btn btn-outline-primary" value="CANCEL">
+            <input type="reset" style="width: 150px; height: 40px;" onclick="window.location.href=`{% url 'viewLoanAccount' account.id %}`" class="btn btn-outline-primary" value="CANCEL">
             <input type="submit" style="width: 150px; height: 40px;" class="btn btn-success" value="SUBMIT">
         </div>
     </div>
@@ -1177,6 +1177,50 @@
                 }   
             }
         })
+    });
+
+    window.onload = function(){
+        document.querySelector('#acc_name').value = `{{account.holder.id}}`;
+        document.querySelector('#AmountReceivedIn').value = `{{account.amount_received}}`;
+        document.querySelector('#procsFeeReceivedFrom').value = `{{account.procs_fee_paid_from}}`;
+    }
+
+    $(document).ready(function(){
+        var type = `{{account.procs_fee_paid_from}}`
+        if(type == 'Cash'){
+            $('.procsFeeReceivedInputs').css('display','none');
+        
+        }else if(type == 'Cheque'){
+            $('.procsFeeReceivedInputs').css('display','none');
+
+            $('#procsFeeChequeID').css('display','block');
+        }else if(type == 'UPI'){
+            $('.procsFeeReceivedInputs').css('display','none');
+
+            $('#procsFeeUPI').css('display','block');
+        }else{
+            $('.procsFeeReceivedInputs').css('display','none');
+            $('#procsFeeAccNum').css('display','block');
+        }   
+    });
+
+    $(document).ready(function(){
+        var type = `{{account.amount_received}}`
+        if(type === 'Cash'){
+            $('.amountReceivedInputs').css('display','none');
+        
+        }else if(type === 'Cheque'){
+            $('.amountReceivedInputs').css('display','none');
+
+            $('#amtRcvdChequeID').css('display','block');
+        }else if(type === 'UPI'){
+            $('.amountReceivedInputs').css('display','none');
+
+            $('#amtRcvdUPI').css('display','block');
+        }else{
+            $('.amountReceivedInputs').css('display','none');
+            $('#amtRcvdAccNum').css('display','block');
+        }   
     });
 </script>
 {% endblock %}

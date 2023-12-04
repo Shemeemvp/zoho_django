@@ -21452,6 +21452,34 @@ def viewBankHolder(request, id):
     return redirect('/')
 
 
+def holderNameAsc(request, id):
+    if request.user:
+        try:
+            context = {
+                'holder': BankHolders.objects.get(id = id),
+                'all_bank_holders': BankHolders.objects.filter(user = request.user).order_by('holder_name'),
+            }
+            return render(request, 'view_bank_holder.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
+
+
+def holderNameDesc(request, id):
+    if request.user:
+        try:
+            context = {
+                'holder': BankHolders.objects.get(id = id),
+                'all_bank_holders': BankHolders.objects.filter(user = request.user).order_by('-holder_name'),
+            }
+            return render(request, 'view_bank_holder.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
+
+
 #---------Loan Account views--------
 
 def loanAccounts(request):
@@ -21499,9 +21527,9 @@ def createLoanAccount(request):
                     loan_amount = float(request.POST['loan_amount'])
                     desc = request.POST['description']
                     amt_rcvd = request.POST['amount_received_in']
-                    amt_rcvd_acc_num = request.POST['amt_rcvd_acc_num']
-                    amt_rcvd_upi_id = request.POST['amt_rcvd_upi_id']
-                    amt_rcvd_cheque_id = request.POST['amt_rcvd_cheque_id']
+                    amt_rcvd_acc_num = None if request.POST['amt_rcvd_acc_num'] == '' else request.POST['amt_rcvd_acc_num']
+                    amt_rcvd_upi_id = None if request.POST['amt_rcvd_upi_id'] == '' else request.POST['amt_rcvd_upi_id']
+                    amt_rcvd_cheque_id = None if request.POST['amt_rcvd_cheque_id'] == '' else request.POST['amt_rcvd_cheque_id']
 
                     loan_date = request.POST['loan_date']
                     interest = float(request.POST['interest_amount'])
@@ -21509,9 +21537,9 @@ def createLoanAccount(request):
 
                     procs_fee = float(request.POST['procs_fee'])
                     procs_fee_paid_from = request.POST['procs_fee_received_from']
-                    procs_fee_acc_num = request.POST['procs_fee_acc_num']
-                    procs_fee_upi_id = request.POST['procs_fee_upi_id']
-                    procs_fee_cheque_id = request.POST['procs_fee_cheque_id']
+                    procs_fee_acc_num = None if request.POST['procs_fee_acc_num'] == '' else request.POST['procs_fee_acc_num']
+                    procs_fee_upi_id = None if request.POST['procs_fee_upi_id'] == '' else request.POST['procs_fee_upi_id']
+                    procs_fee_cheque_id = None if request.POST['procs_fee_cheque_id'] == '' else request.POST['procs_fee_cheque_id']
 
                     # bal = loan_amount+interest
                     status = 'Active'
@@ -21519,17 +21547,36 @@ def createLoanAccount(request):
                     account = LoanAccounts(
                         user = User.objects.get(id = request.user.id),holder = holder,acc_name = acc_name, acc_number = acc_number, lender_bank = lender_bank, description = desc,
                         loan_amount = loan_amount,balance = loan_amount, loan_date = loan_date, amount_received = amt_rcvd ,amt_rcvd_cheque_id = amt_rcvd_cheque_id, amt_rcvd_upi_id = amt_rcvd_upi_id, amt_rcvd_bank_acc_number = amt_rcvd_acc_num,
-                        interest = interest,term_duration = terms, procs_fee = procs_fee,procs_fee_paid_form = procs_fee_paid_from,procs_fee_cheque_id = procs_fee_cheque_id,procs_fee_upi_id = procs_fee_upi_id,procs_fee_bank_acc_number = procs_fee_acc_num, status = status,
+                        interest = interest,term_duration = terms, procs_fee = procs_fee,procs_fee_paid_from = procs_fee_paid_from,procs_fee_cheque_id = procs_fee_cheque_id,procs_fee_upi_id = procs_fee_upi_id,procs_fee_bank_acc_number = procs_fee_acc_num, status = status,
                     )
 
                     account.save()
 
                     #Transaction
+                    trans = LoanAccountTransactions(
+                        user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan', date = date.today(), principal = account.loan_amount, interest = account.interest,
+                        total = account.loan_amount + account.interest
+                    )
+                    trans.save()
 
 
                     return redirect(loanAccounts)
                 else:
-                    print('already exists')
+                    # if account with holder already exists, it will added as an additional loan to the account.
+                    account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
+                    
+                    #Transaction for additional loan
+                    trans = LoanAccountTransactions(
+                        user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
+                        total = float(request.POST['loan_amount']) + float(request.POST['interest_amount'])
+                    )
+                    trans.save()
+
+                    # adjusting balance
+                    account.balance += trans.principal
+                    account.save()
+
+                    messages.info(request, f'The amount {trans.principal} has been added as an Additional Loan as the account for {account.acc_name} already exists.')
                     return redirect(loanAccounts)
         except Exception as e:
             print(e)
@@ -21537,6 +21584,330 @@ def createLoanAccount(request):
     return redirect('/')
 
 
+def viewLoanAccount(request,id):
+    if request.user:
+        try:
+            account = LoanAccounts.objects.get(id = id)
+            context = {
+                'account': account,
+                'transactions': LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id'),
+                'all_loan_accounts': LoanAccounts.objects.filter(user = request.user),
+            }
+            return render(request, 'view_loan_account.html', context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
 
+
+def deleteLoanAccount(request, id):
+    if request.user:
+        try:
+            account = LoanAccounts.objects.get(id = id)
+            LoanAccountTransactions.objects.filter(loan_account = account).delete()
+            account.delete()
+
+            return redirect(loanAccounts)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+def editLoanAccount(request, id):
+    if request.user:
+        try:
+            context = {
+                'account':LoanAccounts.objects.get(id = id),
+                'banks' : Bankcreation.objects.filter(user=request.user),
+                'bankHolders':BankHolders.objects.filter(user = request.user),
+            }
+            
+            return render(request, 'edit_loan_account.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+
+def updateLoanAccount(request,id):
+    if request.user:
+        try:
+            if request.method == 'POST':
+                account = LoanAccounts.objects.get(id = id)
+                holder = BankHolders.objects.get(id = request.POST['acc_name'])
+                acc_name = holder.holder_name
+                acc_number = request.POST['loan_acc_number']
+                lender_bank = request.POST['lender_bank']
+                loan_amount = float(request.POST['loan_amount'])
+                desc = request.POST['description']
+                amt_rcvd = request.POST['amount_received_in']
+                amt_rcvd_acc_num = None if request.POST['amt_rcvd_acc_num'] == '' else request.POST['amt_rcvd_acc_num']
+                amt_rcvd_upi_id = None if request.POST['amt_rcvd_upi_id'] == '' else request.POST['amt_rcvd_upi_id']
+                amt_rcvd_cheque_id = None if request.POST['amt_rcvd_cheque_id'] == '' else request.POST['amt_rcvd_cheque_id']
+
+                loan_date = request.POST['loan_date']
+                interest = float(request.POST['interest_amount'])
+                terms = int(request.POST['terms_duration'])
+
+                procs_fee = float(request.POST['procs_fee'])
+                procs_fee_paid_from = request.POST['procs_fee_received_from']
+                procs_fee_acc_num = None if request.POST['procs_fee_acc_num'] == '' else request.POST['procs_fee_acc_num']
+                procs_fee_upi_id = None if request.POST['procs_fee_upi_id'] == '' else request.POST['procs_fee_upi_id']
+                procs_fee_cheque_id = None if request.POST['procs_fee_cheque_id'] == '' else request.POST['procs_fee_cheque_id']
+
+                # bal = loan_amount+interest
+                status = 'Active'
+
+                if account.holder.id == int(request.POST['acc_name']):
+                    # updating loan amount balance w r t current and new amounts..
+                    if account.loan_amount < loan_amount:
+                        account.balance += abs(account.loan_amount - loan_amount)
+                    elif account.loan_amount > loan_amount:
+                        account.balance -= abs(account.loan_amount - loan_amount)
+
+                    account.lender_bank = lender_bank
+                    account.description = desc
+                    account.loan_amount = loan_amount
+                    account.loan_date = loan_date
+                    account.amount_received = amt_rcvd
+                    account.amt_rcvd_cheque_id = amt_rcvd_cheque_id
+                    account.amt_rcvd_upi_id = amt_rcvd_upi_id
+                    account.amt_rcvd_bank_acc_number = amt_rcvd_acc_num
+                    account.interest = interest
+                    account.term_duration = terms
+                    account.procs_fee = procs_fee
+                    account.procs_fee_paid_from = procs_fee_paid_from
+                    account.procs_fee_cheque_id = procs_fee_cheque_id
+                    account.procs_fee_upi_id = procs_fee_upi_id
+                    account.procs_fee_bank_acc_number = procs_fee_acc_num
+
+                    account.save()
+
+                    #Transaction
+                    trans = LoanAccountTransactions.objects.get(user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan')
+                    trans.date = account.loan_date
+                    trans.principal = account.loan_amount
+                    trans.interest = account.interest
+                    trans.total = account.loan_amount + account.interest
+                    trans.save()
+
+
+                    return redirect(viewLoanAccount,id)
+                else:
+                    # if account name is changed. Checks whether the holder have a Loan account or not, if yes, creates as an additional loan, ohterwiser, creates a new account.
+                    if not LoanAccounts.objects.filter(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name'])).exists():
+                        account = LoanAccounts(
+                            user = User.objects.get(id = request.user.id),holder = holder,acc_name = acc_name, acc_number = acc_number, lender_bank = lender_bank, description = desc,
+                            loan_amount = loan_amount,balance = loan_amount, loan_date = loan_date, amount_received = amt_rcvd ,amt_rcvd_cheque_id = amt_rcvd_cheque_id, amt_rcvd_upi_id = amt_rcvd_upi_id, amt_rcvd_bank_acc_number = amt_rcvd_acc_num,
+                            interest = interest,term_duration = terms, procs_fee = procs_fee,procs_fee_paid_from = procs_fee_paid_from,procs_fee_cheque_id = procs_fee_cheque_id,procs_fee_upi_id = procs_fee_upi_id,procs_fee_bank_acc_number = procs_fee_acc_num, status = status,
+                        )
+
+                        account.save()
+
+                        #Transaction
+                        trans = LoanAccountTransactions(
+                            user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan', date = date.today(), principal = account.loan_amount, interest = account.interest,
+                            total = account.loan_amount + account.interest
+                        )
+                        trans.save()
+
+
+                        return redirect(viewLoanAccount,id)
+                    else:
+                        # if account with holder already exists, it will added as an additional loan to the account.
+                        account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
+                        
+                        #Transaction for additional loan
+                        trans = LoanAccountTransactions(
+                            user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
+                            total = float(request.POST['loan_amount']) + float(request.POST['interest_amount'])
+                        )
+                        trans.save()
+
+                        # adjusting balance
+                        account.balance += trans.principal
+                        account.save()
+
+                        messages.info(request, f'The amount {trans.principal} has been added as an Additional Loan as the account for {account.acc_name} already exists.')
+                        return redirect(viewLoanAccount,id)
+        except Exception as e:
+            print(e)
+            return redirect(viewLoanAccount,id)
+    return redirect('/')
+
+
+def loanAccountActive(request):
+    if request.user:
+        try:
+            context = {
+                'loan_accounts':LoanAccounts.objects.filter(user = request.user, status = "Active")
+            }
+            return render(request, 'loan_accounts.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+def loanAccountInactive(request):
+    if request.user:
+        try:
+            context = {
+                'loan_accounts':LoanAccounts.objects.filter(user = request.user, status = "Inactive")
+            }
+            return render(request, 'loan_accounts.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+def loanAccountSortByName(request):
+    if request.user:
+        try:
+            context = {
+                'loan_accounts':LoanAccounts.objects.filter(user = request.user).order_by('acc_name')
+            }
+            return render(request, 'loan_accounts.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+def loanAccountSortByAmount(request):
+    if request.user:
+        try:
+            context = {
+                'loan_accounts':LoanAccounts.objects.filter(user = request.user).order_by('loan_amount')
+            }
+            return render(request, 'loan_accounts.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+def loanAccountStatusInactive(request,id):
+    if request.user:
+        loan_account = LoanAccounts.objects.get(id = id)
+        loan_account.status = 'Inactive'
+        loan_account.save()
+
+        return redirect(viewLoanAccount,id)
+    return redirect('/')
+
+
+def loanAccountStatusActive(request,id):
+    if request.user:
+        loan_account = LoanAccounts.objects.get(id = id)
+        loan_account.status = 'Active'
+        loan_account.save()
+
+        return redirect(viewLoanAccount,id)
+    return redirect('/')
+
+
+def loanAccountNameAsc(request, id):
+    if request.user:
+        try:
+            account = LoanAccounts.objects.get(id = id)
+            context = {
+                'account': account,
+                'transactions': LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id'),
+                'all_loan_accounts': LoanAccounts.objects.filter(user = request.user).order_by('acc_name'),
+            }
+            return render(request, 'view_loan_account.html', context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+def loanAccountNameDesc(request, id):
+    if request.user:
+        try:
+            account = LoanAccounts.objects.get(id = id)
+            context = {
+                'account': account,
+                'transactions': LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id'),
+                'all_loan_accounts': LoanAccounts.objects.filter(user = request.user).order_by('-acc_name'),
+            }
+            return render(request, 'view_loan_account.html', context)
+        except Exception as e:
+            print(e)
+            return redirect(loanAccounts)
+    return redirect('/')
+
+
+def editLoanAccountTransaction(request,id):
+    if request.user:
+        try:
+            trns = LoanAccountTransactions.objects.get(id = id)
+            context = {
+                'trans' : trns,
+            }
+            return render(request, 'edit_loan_account_transaction.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(viewLoanAccount,trns.loan_account.id)
+    return redirect('/')
+
+
+def updateLoanAccountTransaction(request,id):
+    if request.user:
+        try:
+            if request.method == 'POST':
+                trans = LoanAccountTransactions.objects.get(id = id)
+                loan_account = LoanAccounts.objects.get(id = trans.loan_account.id)
+
+                if request.POST['trans_type'] == 'EMI Paid':
+                    if float(request.POST['principal_amount']) > trans.principal:
+                        loan_account.balance -= abs(float(request.POST['principal_amount']) - float(trans.principal))
+                    else:
+                        loan_account.balance += abs(float(request.POST['principal_amount']) - float(trans.principal))
+                elif request.POST['trans_type'] == 'Opening Loan' or request.POST['trans_type'] == 'Additional Loan':
+                    if float(request.POST['principal_amount']) > trans.principal:
+                        loan_account.balance += abs(float(request.POST['principal_amount']) - float(trans.principal))
+                    else:
+                        loan_account.balance -= abs(float(request.POST['principal_amount']) - float(trans.principal))
+                
+                loan_account.save()
+
+                trans.date = request.POST['trans_date']
+                trans.principal = float(request.POST['principal_amount'])
+                trans.interest = float(request.POST['trans_interest'])
+                trans.total = float(request.POST['principal_amount']) + float(request.POST['trans_interest'])
+                trans.save()
+                
+                return redirect(viewLoanAccount,loan_account.id)
+
+        except Exception as e:
+            print(e)
+            return redirect(editLoanAccountTransaction,id)
+    return redirect('/')
+
+
+def deleteLoanAccountTransaction(request, id):
+    if request.user:
+        try:
+            trans = LoanAccountTransactions.objects.get(id = id)
+            loan_account = LoanAccounts.objects.get(id = trans.loan_account.id)
+
+            if trans.type == 'EMI Paid':
+                loan_account.balance += trans.principal
+            elif trans.type == 'Opening Loan' or trans.type == 'Additional Loan':
+                loan_account.balance -= trans.principal
+            loan_account.save()
+
+            trans.delete()
+
+            return redirect(viewLoanAccount, loan_account.id)
+        except Exception as e:
+            print(e)
+            return redirect(viewLoanAccount, loan_account.id)
+    return redirect('/')
 
 # --------------------------------------end-----------------------------------------------------

@@ -905,30 +905,14 @@
     }
 
     window.onload = function(){
-        const $chqRngSelect = document.querySelector('#chqRange');
-        $chqRngSelect.value = `{{holder.cheque_range}}`
-
-        const $chqPrntSelect = document.querySelector('#chqPrint');
-        $chqPrntSelect.value = `{{holder.cheque_printing}}`
-
-        const $chqPrntCnfgSelect = document.querySelector('#chqPrintConfig');
-        $chqPrntCnfgSelect.value = `{{holder.cheque_print_config}}`
-
-        const $altGst = document.querySelector('#gstAlter');
-        $altGst.value = `{{holder.gst_alter}}`
-
-        const $op_bal_type = document.querySelector('#openbalType');
-        $op_bal_type.value = `{{holder.openbal_type}}`
-
-        const $reg_type = document.querySelector('#regType');
-        $reg_type.value = `{{holder.registration_type}}`
-
-        const $mail_cntry = document.querySelector('#mailingCountry');
-        $mail_cntry.value = `{{holder.mail_country}}`
-
-        const $mail_state = document.querySelector('#mailingState');
-        $mail_state.value = `{{holder.mail_state}}`
-
+        document.querySelector('#chqRange').value = `{{holder.cheque_range}}`;
+        document.querySelector('#chqPrint').value = `{{holder.cheque_printing}}`;
+        document.querySelector('#chqPrintConfig').value = `{{holder.cheque_print_config}}`;
+        document.querySelector('#gstAlter').value = `{{holder.gst_alter}}`;
+        document.querySelector('#openbalType').value = `{{holder.openbal_type}}`;
+        document.querySelector('#regType').value = `{{holder.registration_type}}`;
+        document.querySelector('#mailingCountry').value = `{{holder.mail_country}}`;
+        document.querySelector('#mailingState').value = `{{holder.mail_state}}`;
     }
 </script>
 {% endblock %}

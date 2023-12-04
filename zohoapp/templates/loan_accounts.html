@@ -3,8 +3,8 @@
 {% load static %}
 <style>
   #over:hover{
-        background-color: rgba(110, 110, 110, 0.616);
-        
+      background-color: rgba(110, 110, 110, 0.616);
+      cursor: pointer;  
     }
 </style>
 
@@ -19,18 +19,18 @@
               role="button" style="margin-left: 5px;"><i class="fa fa-sort "></i>
               </a>
               <div class="dropdown-menu ">
-                  <a class="dropdown-item text-white" href="{% url 'bankHolders' %}">All</a>
-                  <a class="dropdown-item text-white" href="{% url 'bankHoldersSortByName' %}">Holder Name</a>
-                  <a class="dropdown-item text-white" href="{% url 'bankHoldersSortByAccNum' %}">Loan Amount</a>
+                  <a class="dropdown-item text-white" href="{% url 'loanAccounts' %}">All</a>
+                  <a class="dropdown-item text-white" href="{% url 'loanAccountSortByName' %}">Holder Name</a>
+                  <a class="dropdown-item text-white" href="{% url 'loanAccountSortByAmount' %}">Loan Amount</a>
               </div>
       </div>
       <div class="col-md-5"></div>
       <div class="col-md-4 d-flex justify-content-end">
         <a class="btn text-center px-4 pt-2 btn-outline-warning" title="SORT" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button" ><i class="fa fa-filter"></i></a>
         <div class="dropdown-menu ">
-            <a class="dropdown-item text-white" href="{% url 'bankHolders' %}">All</a>
-            <a class="dropdown-item text-white" href="{% url 'bankHoldersActive' %}">Active</a>
-            <a class="dropdown-item text-white" href="{% url 'bankHoldersInactive' %}">Inactive</a>
+            <a class="dropdown-item text-white" href="{% url 'loanAccounts' %}">All</a>
+            <a class="dropdown-item text-white" href="{% url 'loanAccountActive' %}">Active</a>
+            <a class="dropdown-item text-white" href="{% url 'loanAccountInactive' %}">Inactive</a>
         </div>
         <!-- <a href="#" class="btn btn-outline-warning px-3 py-2" title="IMPORT" role="button" style="margin-left: 5px;">
             <i class="fas fa-file-import"></i>
@@ -67,7 +67,7 @@
                     <tbody>
 
                       {% for person in loan_accounts %}
-                      <tr id="over" class="clickable-row" data-href="">
+                      <tr id="over" class="clickable-row" data-href="{% url 'viewLoanAccount' person.id %}">
                         <td>{{person.loan_date}}</td>
                         <td>{{person.acc_name}}</td>
                         <td>{{person.acc_number}}</td>
