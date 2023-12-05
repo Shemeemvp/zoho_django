@@ -1005,6 +1005,7 @@ urlpatterns = [
     path('loan_accounts',views.loanAccounts,name='loanAccounts'),
     path('add_loan_account',views.addLoanAccount,name='addLoanAccount'),
     path('get_holder_details',views.getHolderDetails, name='getHolderDetails'),
+    path('get_all_bank_holders',views.getAllBankHolders, name='getAllBankHolders'),
     path('create_loan_account',views.createLoanAccount, name='createLoanAccount'),
     path('view_loan_account/<int:id>',views.viewLoanAccount, name= 'viewLoanAccount'),
     path('delete_loan_account/<int:id>',views.deleteLoanAccount, name='deleteLoanAccount'),
@@ -1021,7 +1022,11 @@ urlpatterns = [
     path('edit_loan_account_transaction/<int:id>',views.editLoanAccountTransaction, name='editLoanAccountTransaction'),
     path('update_loan_account_transaction/<int:id>',views.updateLoanAccountTransaction, name='updateLoanAccountTransaction'),
     path('delete_loan_account_transaction/<int:id>',views.deleteLoanAccountTransaction, name='deleteLoanAccountTransaction'),
-
+    path('make_emi_payment/<int:id>',views.makeEmiPayment, name='makeEmiPayment'),
+    path('get_additional_loan/<int:id>',views.getAdditionalLoan, name='getAdditionalLoan'),
+    path('transactionsInBetween/<int:id>',views.transactionsInBetween, name='transactionsInBetween'),
+    path('share_loan_account_statement/<int:id>',views.shareLoanAccountStatementToEmail, name='shareLoanAccountStatementToEmail'),
+    path('loan_account_statement_pdf/<int:id>',views.loanAccountStatementPdf,name='loanAccountStatementPdf'),
 
 
     # --------------------------------------end-----------------------------------------------------

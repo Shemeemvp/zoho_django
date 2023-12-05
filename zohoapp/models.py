@@ -1741,7 +1741,17 @@ class LoanAccountTransactions(models.Model):
     principal = models.FloatField(null=True, blank=True, default=0.0)
     interest = models.FloatField(null=True, blank=True, default=0.0)
     total = models.FloatField(null=True, blank=True, default=0.0)
+    balance = models.FloatField(null=True, blank=True, default=0.0)
 
+    emi_paid = models.CharField(max_length=200, null=True, blank=True)
+    emi_paid_cheque_id = models.CharField(max_length=200, null=True, blank=True)
+    emi_paid_upi_id = models.CharField(max_length=200, null=True, blank=True)
+    emi_paid_bank_acc_number = models.BigIntegerField(null=True, blank=True)
+
+    additional_loan_received_from = models.CharField(max_length=200, null=True, blank=True)
+    add_loan_cheque_id = models.CharField(max_length=200, null=True, blank=True)
+    add_loan_upi_id = models.CharField(max_length=200, null=True, blank=True)
+    add_loan_bank_acc_number = models.BigIntegerField(null=True, blank=True)
 
 
 # ----------------------------------end--------------------------------------------

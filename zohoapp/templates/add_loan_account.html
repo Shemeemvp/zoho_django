@@ -49,7 +49,7 @@
             </div>
             <div class="from-group mt-2">
                 <label for="">Loan Amount</label>
-                <input class="form-control text-dark" type="number" min="0" step="any" name="loan_amount" id="loanAmount">
+                <input class="form-control text-dark" type="number" min="0" step="any" name="loan_amount" id="loanAmount" required>
             </div>
         </div>
         <div class="col-sm-6">
@@ -220,9 +220,7 @@
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
                     <div class="d-flex">
-                        <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                        type="button" data-dismiss="modal" id="saveBank">Save
-                        </button> 
+                        <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3" type="button" data-dismiss="modal" id="saveBank">Save</button> 
                         <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" data-dismiss="modal" data-toggle="modal" data-target="#newBankHolder" aria-label="Close">
                             <span aria-hidden="true">Cancel</span>
                         </button>
@@ -250,7 +248,7 @@
         </div>
         <div class="modal-body" style="background: rgb(32, 35, 37);">
           <div class="card p-3 m-3">
-            <form action="" method="post" onsubmit="return validateHolderData()">
+            <form method="post" onsubmit="return validateHolderData()" id="newBankHolderForm">
                 {% csrf_token %}
                 <div class="row mt-5">
                     <div class="col-sm-6" style=" border: 1px solid rgba(128, 128, 128, 0.6);">
@@ -264,13 +262,13 @@
                                 <label for="">Name</label>
                             </div>
                             <div class="col-sm-8 mt-4">
-                                <input required type="text" name="holder_name" placeholder="Full Name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
+                                <input required id="holderName" type="text" name="holder_name" placeholder="Full Name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <label for="">Alias</label>
                             </div>
                             <div class="col-sm-8 mt-4">
-                                <input type="text" name="holder_alias_name" placeholder="Optional" class="form-control bg-light text-dark">
+                                <input type="text" id="holderAliasName" name="holder_alias_name" placeholder="Optional" class="form-control bg-light text-dark">
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <label for="">Phone Number</label>
@@ -439,7 +437,7 @@
                                 <label for="">Mailing Name</label>
                             </div>
                             <div class="col-sm-8 mt-4">
-                                <input type="text" name="mailing_name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
+                                <input type="text" id="mailingName" name="mailing_name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <label for="">Address</label>
@@ -730,7 +728,7 @@
                                 <label for="">Date</label>
                             </div>
                             <div class="col-sm-7 mt-4">
-                                <input type="date" name="openbal_date" value="{% now 'Y-m-d' %}" class="form-control bg-light text-dark">
+                                <input type="date" name="openbal_date" id="openbalDate" value="{% now 'Y-m-d' %}" class="form-control bg-light text-dark">
                             </div>
                             <div class="col-sm-5 mt-4">
                                 <label for="">Amount</label>
@@ -746,14 +744,14 @@
             
                     </div>
                 </div>
-                <div class="row mt-4">
+                <!-- <div class="row mt-4">
                     <div class="col">
                         <div class="form-group d-flex align-items-center">
                             <input type="checkbox" name="terms" id="agreeTerms" required>
                             <label for="agreeTerms" class="ms-2">Agree Terms & Conditions</label>
                         </div>
                     </div>
-                </div>
+                </div> -->
             
                 <!-- <div class="row mt-5">
                     <div class="col-sm-12" style="text-align: center;">
@@ -765,9 +763,7 @@
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
                     <div class="d-flex">
-                        <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
-                        type="button" data-dismiss="modal" id="saveBankHolder">Save
-                        </button> 
+                        <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3" type="button" data-dismiss="modal" id="saveBankHolder">Save</button>
                         <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">Cancel</span>
                         </button>
@@ -1049,7 +1045,7 @@
                 success: function(response) {
                     console.log("AJAX Success - Response Data:", response);
                     document.getElementById("modalAddBank").reset();
-                    // $('#addBank').modal('toggle');
+                    $('#newBankHolder').modal('toggle');
                     reloadBanks();
                     
                 },         
@@ -1178,5 +1174,149 @@
             }
         })
     });
+
+    $(document).on("click","#saveBankHolder",function(){
+        var holder_name = $("#holderName").val();
+        var holder_alias_name = $("#holderAliasName").val();
+        var contact = $("#holder_contact").val();
+        var holder_email = $("#holder_email").val();
+        var acc_type = $("#acc_type").val();
+        var bank_id = $("#bankId").val();
+        var bank_name = $("#bank_name").val();
+        var acc_num = $("#accountNumber").val();
+        var ifsc_code = $("#ifscCode").val();
+        var swift_code = $("#swiftCode").val();
+        var branch_name = $("#branchName").val();
+        var chq_range = $("#chqRange").val();
+        var chq_print = $("#chqPrint").val();
+        var chq_print_config = $("#chqPrintConfig").val();
+        var pan_number = $("#panNumber").val();
+        var registration_type = $("#regType").val();
+        var gstin = $("#gstNumber").val();
+        var gst_alter = $("#gstAlter").val();
+        var mailing_name = $("#mailingName").val();
+        var mailing_address = $("#mailingAddress").val();
+        var mailing_country = $("#mailingCountry").val();
+        var mailing_state = $("#mailingState").val();
+        var mailing_pin = $("#mailingPin").val();
+        var openbal_date = $("#openbalDate").val();
+        var openbal_type = $("#openbalType").val();
+        var openbal_amount = $("#openbalAmount").val();
+
+
+
+
+        if (holder_name !="" && contact !="" && bank_name !="" && pan_number !="" && openbal_amount !=""){
+            const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+            const mobPattern = /^\d{10}$/;
+            const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/;
+            const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+            if( contact != ""){
+                if(! mobPattern.test(contact)){
+                    alert('Invalid.! Mobile Number should have 10 digits..')
+                    return;
+                }
+            }
+
+            if( holder_email != ""){
+                if(! emailRegex.test(holder_email)){
+                    alert('Invalid Email address..\n Ex: jon@example.com')
+                    return;
+                }
+            }
+
+            if( pan_number != ""){
+                if(! panRegex.test(pan_number)){
+                    alert('Invalid Pan Number..!\nEx: ABCD1234E')
+                    return;
+                }
+            }
+
+            if(gstin == "" && ($('#regType').val() == 'Regular' || $('#regType').val() == 'Composition')){
+                alert('GST Number is required.!')
+                return;
+            }else if(gstin != "" && ($('#regType').val() == 'Regular' || $('#regType').val() == 'Composition')){
+                if(! gstinPattern.test(gstin)){
+                    alert('Invalid GST Number..\nEx: 22AAAAA0000A1Z5')
+                    return;
+                }
+            }
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'newBankHolder' %}",
+                data:{
+                    holder_name : holder_name,
+                    holder_alias_name : holder_alias_name,
+                    contact : contact,
+                    holder_email : holder_email,
+                    acc_type : acc_type,
+                    bank_id : bank_id,
+                    bank_name : bank_name,
+                    acc_num : acc_num,
+                    ifsc_code : ifsc_code,
+                    swift_code : swift_code,
+                    branch_name : branch_name,
+                    chq_range : chq_range,
+                    chq_print : chq_print,
+                    chq_print_config : chq_print_config,
+                    pan_number : pan_number,
+                    registration_type : registration_type,
+                    gstin : gstin,
+                    gst_alter : gst_alter,
+                    mailing_name : mailing_name,
+                    mailing_address : mailing_address,
+                    mailing_country : mailing_country,
+                    mailing_state : mailing_state,
+                    mailing_pin : mailing_pin,
+                    openbal_date : openbal_date,
+                    openbal_type : openbal_type,
+                    openbal_amount : openbal_amount,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    console.log("AJAX Success - Response Data:", response);
+                    document.getElementById("newBankHolderForm").reset();
+                    // $('#newBankHolder').modal('toggle');
+                    reloadBankHolder();
+                    
+                },         
+            });
+            // $("#bank_name").find('value',name).prop('selected',true);
+            // $('#bank_name option[value="' + name + '"]').prop('selected', true);
+            // getBankData();
+        }
+        else{
+            alert('All Fields are mandatory.')
+        }
+    });
+
+    function reloadBankHolder() { 
+        $.ajax({
+            url: "{% url 'getAllBankHolders' %}",
+            type: "GET",
+            dataType: "json",
+            data: $(this).serialize(),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+
+            success: function(data) {
+                console.log("AJAX Success - Dropdown Data:", data);
+
+                var dropdown = $('#acc_name');
+                dropdown.empty();
+                dropdown.append(`<option value="">Choose Bank Holder</option>`);
+                $.each(data, function(key, value) {
+                    for(var i=0; i<value.length; i++){
+                        dropdown.append($('<option></option>').text(value[i].name).val(value[i].id))
+                    }
+                    // console.log('Banks reloaded..');
+                });
+            },
+            error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            }
+        });
+    }
 </script>
 {% endblock %}

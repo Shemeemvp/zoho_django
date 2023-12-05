@@ -510,7 +510,7 @@
                         <option value="Debit">Debit</option> 
                         <option value="Credit">Credit</option>
                     </select>
-                    <input type="number" name="openbal_amount" value="{{holder.openbal_amount}}" id="openbalAmount" class="form-control bg-light text-dark ms-1">
+                    <input type="number" name="openbal_amount" value="{{holder.openbal_amount}}" id="openbalAmount" class="form-control bg-light text-dark ms-1" min="0" step="any" required>
                 </div>
             </div>
 
@@ -820,6 +820,13 @@
                 $('#gstInput').css('display','flex');
             }
         })
+    })
+
+    $(document).ready(function(){
+        var type = `{{holder.registration_type}}`;
+        if(type != 'Regular' && type != 'Composition'){
+            $('#gstInput').css('display','none');
+        }
     })
 
     $(document).ready(function(){

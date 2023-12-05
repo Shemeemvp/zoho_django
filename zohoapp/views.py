@@ -21515,6 +21515,28 @@ def getHolderDetails(request):
     return redirect('/')
 
 
+def getAllBankHolders(request):
+    if request.user:
+        try:
+            list = []
+            holders = BankHolders.objects.filter(user = request.user)
+
+            for item in holders:
+                holderDetails = {
+                    "id": item.id,
+                    "name": item.holder_name,
+                }
+                list.append(holderDetails)
+
+            # print(list)
+            return JsonResponse({"holders": list}, safe=False)
+        except Exception as e:
+            print(e)
+            return JsonResponse({"message": "failed"})
+    else:
+        return JsonResponse({"message": "failed"})
+
+
 def createLoanAccount(request):
     if request.user:
         try:
@@ -21532,10 +21554,10 @@ def createLoanAccount(request):
                     amt_rcvd_cheque_id = None if request.POST['amt_rcvd_cheque_id'] == '' else request.POST['amt_rcvd_cheque_id']
 
                     loan_date = request.POST['loan_date']
-                    interest = float(request.POST['interest_amount'])
-                    terms = int(request.POST['terms_duration'])
+                    interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
+                    terms = 0 if request.POST['terms_duration'] == '' else  int(request.POST['terms_duration'])
 
-                    procs_fee = float(request.POST['procs_fee'])
+                    procs_fee = 0 if request.POST['procs_fee'] == '' else float(request.POST['procs_fee'])
                     procs_fee_paid_from = request.POST['procs_fee_received_from']
                     procs_fee_acc_num = None if request.POST['procs_fee_acc_num'] == '' else request.POST['procs_fee_acc_num']
                     procs_fee_upi_id = None if request.POST['procs_fee_upi_id'] == '' else request.POST['procs_fee_upi_id']
@@ -21555,7 +21577,7 @@ def createLoanAccount(request):
                     #Transaction
                     trans = LoanAccountTransactions(
                         user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan', date = date.today(), principal = account.loan_amount, interest = account.interest,
-                        total = account.loan_amount + account.interest
+                        total = account.loan_amount + account.interest, balance = account.balance
                     )
                     trans.save()
 
@@ -21565,16 +21587,18 @@ def createLoanAccount(request):
                     # if account with holder already exists, it will added as an additional loan to the account.
                     account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
                     
+                    # adjusting balance
+                    account.balance += float(request.POST['loan_amount'])
+                    account.save()
+                    interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
                     #Transaction for additional loan
                     trans = LoanAccountTransactions(
                         user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
-                        total = float(request.POST['loan_amount']) + float(request.POST['interest_amount'])
+                        total = float(request.POST['loan_amount']) + interest, balance = account.balance
                     )
                     trans.save()
 
-                    # adjusting balance
-                    account.balance += trans.principal
-                    account.save()
+                    
 
                     messages.info(request, f'The amount {trans.principal} has been added as an Additional Loan as the account for {account.acc_name} already exists.')
                     return redirect(loanAccounts)
@@ -21592,6 +21616,7 @@ def viewLoanAccount(request,id):
                 'account': account,
                 'transactions': LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id'),
                 'all_loan_accounts': LoanAccounts.objects.filter(user = request.user),
+                'banks' : Bankcreation.objects.filter(user=request.user),
             }
             return render(request, 'view_loan_account.html', context)
         except Exception as e:
@@ -21648,7 +21673,7 @@ def updateLoanAccount(request,id):
                 amt_rcvd_cheque_id = None if request.POST['amt_rcvd_cheque_id'] == '' else request.POST['amt_rcvd_cheque_id']
 
                 loan_date = request.POST['loan_date']
-                interest = float(request.POST['interest_amount'])
+                interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
                 terms = int(request.POST['terms_duration'])
 
                 procs_fee = float(request.POST['procs_fee'])
@@ -21691,6 +21716,7 @@ def updateLoanAccount(request,id):
                     trans.principal = account.loan_amount
                     trans.interest = account.interest
                     trans.total = account.loan_amount + account.interest
+                    trans.balance = account.balance
                     trans.save()
 
 
@@ -21709,7 +21735,7 @@ def updateLoanAccount(request,id):
                         #Transaction
                         trans = LoanAccountTransactions(
                             user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan', date = date.today(), principal = account.loan_amount, interest = account.interest,
-                            total = account.loan_amount + account.interest
+                            total = account.loan_amount + account.interest, balance = account.balance
                         )
                         trans.save()
 
@@ -21719,16 +21745,17 @@ def updateLoanAccount(request,id):
                         # if account with holder already exists, it will added as an additional loan to the account.
                         account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
                         
+                        # adjusting balance
+                        account.balance += float(request.POST['loan_amount'])
+                        account.save()
+                        interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
                         #Transaction for additional loan
                         trans = LoanAccountTransactions(
                             user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
-                            total = float(request.POST['loan_amount']) + float(request.POST['interest_amount'])
+                            total = float(request.POST['loan_amount']) + interest,balance = account.balance
                         )
                         trans.save()
 
-                        # adjusting balance
-                        account.balance += trans.principal
-                        account.save()
 
                         messages.info(request, f'The amount {trans.principal} has been added as an Additional Loan as the account for {account.acc_name} already exists.')
                         return redirect(viewLoanAccount,id)
@@ -21818,6 +21845,7 @@ def loanAccountNameAsc(request, id):
                 'account': account,
                 'transactions': LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id'),
                 'all_loan_accounts': LoanAccounts.objects.filter(user = request.user).order_by('acc_name'),
+                'banks' : Bankcreation.objects.filter(user=request.user),
             }
             return render(request, 'view_loan_account.html', context)
         except Exception as e:
@@ -21834,6 +21862,7 @@ def loanAccountNameDesc(request, id):
                 'account': account,
                 'transactions': LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id'),
                 'all_loan_accounts': LoanAccounts.objects.filter(user = request.user).order_by('-acc_name'),
+                'banks' : Bankcreation.objects.filter(user=request.user),
             }
             return render(request, 'view_loan_account.html', context)
         except Exception as e:
@@ -21880,6 +21909,7 @@ def updateLoanAccountTransaction(request,id):
                 trans.principal = float(request.POST['principal_amount'])
                 trans.interest = float(request.POST['trans_interest'])
                 trans.total = float(request.POST['principal_amount']) + float(request.POST['trans_interest'])
+                trans.balance = loan_account.balance
                 trans.save()
                 
                 return redirect(viewLoanAccount,loan_account.id)
@@ -21910,4 +21940,161 @@ def deleteLoanAccountTransaction(request, id):
             return redirect(viewLoanAccount, loan_account.id)
     return redirect('/')
 
+
+def makeEmiPayment(request, id):
+    if request.user:
+        if request.method == 'POST':
+            try:
+                account = LoanAccounts.objects.get(id = id)
+                emi_date = request.POST['emi_date']
+                principal = float(request.POST['emi_amount'])
+                interest = 0 if request.POST['emi_interest'] == '' else float(request.POST['emi_interest'])
+                total = principal + interest
+                paid_from = request.POST['emi_paid_from']
+                acc_num = None if request.POST['emi_paid_acc_num'] == "" else request.POST['emi_paid_acc_num']
+                emi_upi = request.POST['emi_paid_upi_id']
+                emi_cheque = request.POST['emi_paid_cheque_id']
+                
+                account.balance -= principal
+                account.save()
+
+                trans = LoanAccountTransactions(
+                    user = User.objects.get(id = request.user.id), loan_account = account, type = 'EMI Paid', date = emi_date, principal = principal, interest = interest,
+                    total = total, emi_paid = paid_from, emi_paid_upi_id = emi_upi,emi_paid_cheque_id=emi_cheque, emi_paid_bank_acc_number = acc_num, balance = account.balance
+                )
+                trans.save()
+                
+                
+
+                return redirect(viewLoanAccount, id)
+
+            except Exception as e:
+                print(e)
+                return redirect(viewLoanAccount, id)
+    return redirect('/')
+
+
+def getAdditionalLoan(request, id):
+    if request.user:
+        if request.method == 'POST':
+            try:
+                account = LoanAccounts.objects.get(id = id)
+                al_date = request.POST['add_loan_date']
+                principal = float(request.POST['add_loan_amount'])
+                interest = 0 if request.POST['add_loan_interest'] == '' else float(request.POST['add_loan_interest'])
+                total = principal + interest
+                rcvd_from = request.POST['add_loan_received_from']
+                acc_num = None if request.POST['add_loan_acc_num'] == "" else request.POST['add_loan_acc_num']
+                al_upi = request.POST['add_loan_upi_id']
+                al_cheque = request.POST['add_loan_cheque_id']
+                
+                account.balance += principal
+                account.save()
+
+                trans = LoanAccountTransactions(
+                    user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = al_date, principal = principal, interest = interest,
+                    total = total, additional_loan_received_from = rcvd_from, add_loan_upi_id = al_upi,add_loan_cheque_id=al_cheque, add_loan_bank_acc_number = acc_num, balance = account.balance
+                )
+                trans.save()
+                
+                
+
+                return redirect(viewLoanAccount, id)
+
+            except Exception as e:
+                print(e)
+                return redirect(viewLoanAccount, id)
+    return redirect('/')
+
+
+def transactionsInBetween(request, id):
+    if request.user:
+        try:
+            account = LoanAccounts.objects.get(id = id)
+            fromDate = request.GET['trans_from_date']
+            toDate = request.GET['trans_to_date']
+            if 'statement' in request.GET:
+                stat = 'true'
+            else:
+                stat = 'false'
+
+            context = {
+                'account': account,
+                'transactions': LoanAccountTransactions.objects.filter(loan_account = account,date__range = [fromDate,toDate]),
+                'all_loan_accounts': LoanAccounts.objects.filter(user = request.user),
+                'banks' : Bankcreation.objects.filter(user=request.user),
+                'from':fromDate,
+                'to':toDate,
+                'statement':stat,
+            }
+            return render(request, 'view_loan_account.html', context)
+        except Exception as e:
+            print(e)
+            return redirect(viewLoanAccount, id)
+
+    return redirect('/')    
+
+
+def shareLoanAccountStatementToEmail(request,id):
+    if request.user:
+        try:
+            if request.method == 'POST':
+                emails_string = request.POST['email_ids']
+
+                # Split the string by commas and remove any leading or trailing whitespace
+                emails_list = [email.strip() for email in emails_string.split(',')]
+                email_message = request.POST['email_message']
+                # print(emails_list)
+
+                account = LoanAccounts.objects.get(id = id)
+                trans = LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id')
+                cmp = company_details.objects.get(user = request.user)
+            
+                context = {'account': account,'transactions':trans}
+                template_path = 'loan_account_statement_pdf.html'
+                template = get_template(template_path)
+
+                html  = template.render(context)
+                result = BytesIO()
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)#, link_callback=fetch_resources)
+                pdf = result.getvalue()
+                filename = f'Statement - {account.acc_name}.pdf'
+                subject = f"Transaction Statement - {account.acc_name}"
+                email = EmailMessage(subject, f"Hi,\nPlease find the attached Statment for -{account.acc_name}. \n{email_message}\n\n--\nRegards,\n{cmp.company_name}\n{cmp.address}\n{cmp.city} - {cmp.state}\n{cmp.contact_number}", from_email=settings.EMAIL_HOST_USER, to=emails_list)
+                email.attach(filename, pdf, "application/pdf")
+                email.send(fail_silently=False)
+
+                messages.success(request, 'Statement has been shared via email successfully..!')
+                return redirect(viewLoanAccount,id)
+        except Exception as e:
+            print(e)
+            messages.error(request, f'{e}')
+            return redirect(viewLoanAccount, id)
+
+
+def loanAccountStatementPdf(request,id):
+    if request.user:
+        account = LoanAccounts.objects.get(id = id)
+        trans = LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id')
+
+        context = {'account': account,'transactions':trans}
+    
+        
+        template_path = 'loan_account_statement_pdf.html'
+        fname = 'Statement_'+ account.acc_name
+        # return render(request, 'loan_account_statement_pdf.html',context)
+        # Create a Django response object, and specify content_type as pdftemp_creditnote
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] =f'attachment; filename = {fname}.pdf'
+        # find the template and render it.
+        template = get_template(template_path)
+        html = template.render(context)
+
+        # create a pdf
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        # if error then show some funny view
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
+    return redirect('/')
 # --------------------------------------end-----------------------------------------------------
