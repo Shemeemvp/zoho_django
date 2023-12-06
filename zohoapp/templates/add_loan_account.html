@@ -12,14 +12,14 @@
 <script src="{% static 'js\country-states.js'%}"></script>
 <div class="row text-start text-uppercase">
     <div class="col-sm-12" >
-        <h3 class="mt-1">Create Loan Account</h3>
+        <h3 class="mt-1 text-center">Create Loan Account</h3>
     </div>
 </div>
 
 <form action="{% url 'createLoanAccount' %}" method="post">
     {% csrf_token %}
-    <div class="row mt-5">
-        <div class="col-sm-6">
+    <div class="row mt-5 d-flex justify-content-center">
+        <div class="col-sm-8">
             <div class="from-group">
                 <label for="">Account Name</label>
                 <div class="d-flex">
@@ -29,39 +29,38 @@
                         <option value="{{i.id}}">{{i.holder_name}}</option>
                         {% endfor %}
                     </select>
-                    <a href="#newBankHolder" class="btn btn-light ms-1 d-flex align-items-center" data-dismiss="modal" data-toggle="modal">+</a>
+                    <a href="#newBankHolder" class="btn ms-1 d-flex align-items-center" style="background-color: chocolate; color: black;" data-dismiss="modal" data-toggle="modal">+</a>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="from-group">
+        <div class="col-sm-8">
+            <div class="from-group mt-3">
                 <label for="">Account Number</label>
                 <input class="form-control text-dark" type="text" name="loan_acc_number" id="loanAccountNumber" readonly>
             </div>
         </div>
     </div>
-
-    <div class="row mt-3">
-        <div class="col-sm-6">
+    <div class="row mt-3 d-flex justify-content-center">
+        <div class="col-sm-8">
             <div class="from-group">
                 <label for="">Lender Bank</label>
                 <input class="form-control text-dark" type="text" name="lender_bank" id="lenderBank">
             </div>
-            <div class="from-group mt-2">
+            <div class="from-group mt-3">
                 <label for="">Loan Amount</label>
                 <input class="form-control text-dark" type="number" min="0" step="any" name="loan_amount" id="loanAmount" required>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="from-group">
+        <div class="col-sm-8">
+            <div class="from-group mt-3">
                 <label for="">Description</label>
                 <textarea name="description" class="form-control text-dark" id="description" cols="" rows="4" placeholder="Loan account description.." style="height: 110px;"></textarea>
             </div>
         </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-sm-6">
+    <div class="row mt-3 d-flex justify-content-center">
+        <div class="col-sm-8">
             <div class="from-group">
                 <label for="">Amount Received In</label>
                 <select class="form-control bg-light text-dark" name="amount_received_in" id="AmountReceivedIn">
@@ -73,51 +72,51 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="from-group mt-2 amountReceivedInputs" id="amtRcvdAccNum" style="display: none;">
+            <div class="from-group mt-3 amountReceivedInputs" id="amtRcvdAccNum" style="display: none;">
                 <label for="">Account #</label>
                 <input class="form-control text-dark" type="number" name="amt_rcvd_acc_num" id="amt_rcvd_acc_num" readonly>
             </div>
-            <div class="from-group mt-2 amountReceivedInputs" id="amtRcvdUPI" style="display: none;">
+            <div class="from-group mt-3 amountReceivedInputs" id="amtRcvdUPI" style="display: none;">
                 <label for="">UPI ID</label>
                 <input class="form-control text-dark" type="text" name="amt_rcvd_upi_id">
             </div>
-            <div class="from-group mt-2 amountReceivedInputs" id="amtRcvdChequeID" style="display: none;">
+            <div class="from-group mt-3 amountReceivedInputs" id="amtRcvdChequeID" style="display: none;">
                 <label for="">Cheque ID</label>
                 <input class="form-control text-dark" type="text" name="amt_rcvd_cheque_id">
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="from-group">
+        <div class="col-sm-8">
+            <div class="from-group mt-3">
                 <label for="">Loan Date</label>
                 <input class="form-control text-dark" type="date" value="{% now 'Y-m-d' %}" name="loan_date" id="loanDate">
             </div>
         </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-sm-6">
+    <div class="row mt-3 d-flex justify-content-center">
+        <div class="col-sm-8">
             <div class="from-group">
                 <label for="">Interest</label>
                 <input class="form-control text-dark" type="number" min="0" step="any" name="interest_amount" id="interestAmount">
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="from-group">
+        <div class="col-sm-8">
+            <div class="from-group mt-3">
                 <label for="">Terms Duration</label>
                 <input class="form-control text-dark" type="number" placeholder="Duration in months" name="terms_duration" id="termsDuration">
             </div>
         </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-sm-6">
+    <div class="row mt-3 d-flex justify-content-center">
+        <div class="col-sm-8">
             <div class="from-group">
                 <label for="">Processing Fee</label>
                 <input class="form-control text-dark" type="number" min="0" step="any" name="procs_fee" id="procsFee">
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="from-group">
+        <div class="col-sm-8">
+            <div class="from-group mt-3">
                 <label for="">Processing Fee Received From</label>
                 <select class="form-control bg-light text-dark" name="procs_fee_received_from" id="procsFeeReceivedFrom">
                     <option value="Cash">Cash</option>
@@ -128,15 +127,15 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="from-group mt-2 procsFeeReceivedInputs" id="procsFeeAccNum" style="display: none;">
+            <div class="from-group mt-3 procsFeeReceivedInputs" id="procsFeeAccNum" style="display: none;">
                 <label for="">Account #</label>
                 <input class="form-control text-dark" type="number" name="procs_fee_acc_num" id="procs_fee_acc_num" readonly>
             </div>
-            <div class="from-group mt-2 procsFeeReceivedInputs" id="procsFeeUPI" style="display: none;">
+            <div class="from-group mt-3 procsFeeReceivedInputs" id="procsFeeUPI" style="display: none;">
                 <label for="">UPI ID</label>
                 <input class="form-control text-dark" type="text" name="procs_fee_upi_id">
             </div>
-            <div class="from-group mt-2 procsFeeReceivedInputs" id="procsFeeChequeID" style="display: none;">
+            <div class="from-group mt-3 procsFeeReceivedInputs" id="procsFeeChequeID" style="display: none;">
                 <label for="">Cheque ID</label>
                 <input class="form-control text-dark" type="text" name="procs_fee_cheque_id">
             </div>
@@ -146,11 +145,15 @@
 
 
 
-    <div class="row mt-5">
+    <!-- <div class="row mt-5">
         <div class="col-sm-12" style="text-align: center;">
             <input type="reset" style="width: 150px; height: 40px;" onclick="window.location.href=`{% url 'loanAccounts' %}`" class="btn btn-outline-primary" value="CANCEL">
             <input type="submit" style="width: 150px; height: 40px;" class="btn btn-success" value="SUBMIT">
         </div>
+    </div> -->
+    <div class="row mt-5 mb-3 d-flex justify-content-center">
+        <input style="width: 150px;margin-right: 1vh; background-color: chocolate;" type="submit" class="btn mt-2" value="Save" name="Save">
+        <input style="width: 150px; background-color: chocolate;" class="btn mt-2" type="reset" onclick="window.location.href=`{% url 'loanAccounts' %}`" value="Cancel">
     </div>
 </form>
 
@@ -311,7 +314,7 @@
                                     <option value="{{b.name}}" text="{{b.id}}">{{b.name}}</option>
                                     {% endfor %}
                                 </select>
-                                <a href="#newBank" class="btn btn-light ms-1 d-flex align-items-center" data-dismiss="modal" data-toggle="modal">+</a>
+                                <a href="#newBank" class="btn ms-1 d-flex align-items-center" style="background-color: chocolate; color: black;" data-dismiss="modal" data-toggle="modal">+</a>
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <label for="">Acc. Number</label>
@@ -881,7 +884,12 @@
                 },
                 type : 'POST',
                 success: function(data) {
-                    $('#loanAccountNumber').val(data.acc_number);
+                    if(data.isTaken == 'false'){
+                        $('#loanAccountNumber').val(data.acc_number);
+                    }else{
+                        alert(data.message)
+                    }
+                    
                 }
             });
             }
@@ -1318,5 +1326,66 @@
             }
         });
     }
+
+    $(document).ready(function(){
+        $('#holderName').on('blur',function(){
+          var name = $(this).val();
+          if(name != ""){
+            $.ajax({
+                url: "{% url 'checkHolderName' %}",
+                type: "GET",
+                data:{
+                    name : name,
+                },
+
+                success: function(data) {
+                    console.log("AJAX Success - Dropdown Data:", data);
+                    if(data.isTaken){
+                        alert(data.message)
+                        return;
+                    }
+                },
+                error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                }
+            });
+          }
+        })
+    })
+
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer" ></script>
+{%if messages%} {%for message in messages%} {%if message.tags == "success"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "success",
+    title: "{{message}}",
+  });
+</script>
+{%elif message.tags == "warning"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "warning",
+    title: "{{message}}",
+  });
+</script>
+{%elif message.tags == "error"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "error",
+    title: "{{message}}",
+  });
+</script>
+{%else%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "info",
+    title: "{{message}}",
+  });
+</script>
+{%endif%} {%endfor%} {%endif%}
 {% endblock %}

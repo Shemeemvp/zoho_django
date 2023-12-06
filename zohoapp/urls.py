@@ -992,6 +992,7 @@ urlpatterns = [
     path('bank_holders_inactive',views.bankHoldersInactive, name='bankHoldersInactive'),
     path('bank_holders_sortby_name',views.bankHoldersSortByName, name='bankHoldersSortByName'),
     path('bank_holders_sortby_acc_num',views.bankHoldersSortByAccNum, name='bankHoldersSortByAccNum'),
+    path('bank_holders_sortby_bank_name',views.bankHoldersSortByBankName, name='bankHoldersSortByBankName'),
     path('bank_holder_change_inactive/<int:id>',views.bankHolderStatusInactive, name='bankHolderStatusInactive'),
     path('bank_holder_change_active/<int:id>',views.bankHolderStatusActive, name='bankHolderStatusActive'),
     path('delete_bank_holder/<int:id>',views.deleteBankHolder, name='deleteBankHolder'),
@@ -1027,6 +1028,7 @@ urlpatterns = [
     path('transactionsInBetween/<int:id>',views.transactionsInBetween, name='transactionsInBetween'),
     path('share_loan_account_statement/<int:id>',views.shareLoanAccountStatementToEmail, name='shareLoanAccountStatementToEmail'),
     path('loan_account_statement_pdf/<int:id>',views.loanAccountStatementPdf,name='loanAccountStatementPdf'),
+    path('check_holder_name',views.checkHolderName, name='checkHolderName'),
 
 
     # --------------------------------------end-----------------------------------------------------

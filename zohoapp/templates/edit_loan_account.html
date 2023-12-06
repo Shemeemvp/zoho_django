@@ -29,7 +29,7 @@
                         <option value="{{i.id}}">{{i.holder_name}}</option>
                         {% endfor %}
                     </select>
-                    <a href="#newBankHolder" class="btn btn-light ms-1 d-flex align-items-center" data-dismiss="modal" data-toggle="modal">+</a>
+                    <a href="#newBankHolder" class="btn ms-1 d-flex align-items-center" style="background-color: chocolate; color: black;" data-dismiss="modal" data-toggle="modal">+</a>
                 </div>
             </div>
         </div>
@@ -146,11 +146,15 @@
 
 
 
-    <div class="row mt-5">
+    <!-- <div class="row mt-5">
         <div class="col-sm-12" style="text-align: center;">
             <input type="reset" style="width: 150px; height: 40px;" onclick="window.location.href=`{% url 'viewLoanAccount' account.id %}`" class="btn btn-outline-primary" value="CANCEL">
             <input type="submit" style="width: 150px; height: 40px;" class="btn btn-success" value="SUBMIT">
         </div>
+    </div> -->
+    <div class="row mt-5 mb-3">
+        <input style="width: 150px;margin-right: 1vh; background-color: chocolate;" type="submit" class="btn mt-2" value="Save" name="Save">
+        <input style="width: 150px; background-color: chocolate;" class="btn mt-2" type="reset" onclick="window.location.href=`{% url 'viewLoanAccount' account.id %}`" value="Cancel">
     </div>
 </form>
 
@@ -264,7 +268,7 @@
                                 <label for="">Name</label>
                             </div>
                             <div class="col-sm-8 mt-4">
-                                <input required type="text" name="holder_name" placeholder="Full Name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
+                                <input required type="text" id="holderName" name="holder_name" placeholder="Full Name" class="form-control bg-light text-dark" class="form-control bg-light text-dark">
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <label for="">Alias</label>
@@ -313,7 +317,7 @@
                                     <option value="{{b.name}}" text="{{b.id}}">{{b.name}}</option>
                                     {% endfor %}
                                 </select>
-                                <a href="#newBank" class="btn btn-light ms-1 d-flex align-items-center" data-dismiss="modal" data-toggle="modal">+</a>
+                                <a href="#newBank" class="btn ms-1 d-flex align-items-center" style="background-color: chocolate; color: black;" data-dismiss="modal" data-toggle="modal">+</a>
                             </div>
                             <div class="col-sm-4 mt-4">
                                 <label for="">Acc. Number</label>
@@ -885,7 +889,11 @@
                 },
                 type : 'POST',
                 success: function(data) {
-                    $('#loanAccountNumber').val(data.acc_number);
+                    if(data.isTaken == 'false'){
+                        $('#loanAccountNumber').val(data.acc_number);
+                    }else{
+                        alert(data.message)
+                    }
                 }
             });
             }
@@ -1222,5 +1230,65 @@
             $('#amtRcvdAccNum').css('display','block');
         }   
     });
+
+    $(document).ready(function(){
+        $('#holderName').on('blur',function(){
+          var name = $(this).val();
+          if(name != ""){
+            $.ajax({
+                url: "{% url 'checkHolderName' %}",
+                type: "GET",
+                data:{
+                    name : name,
+                },
+
+                success: function(data) {
+                    console.log("AJAX Success - Dropdown Data:", data);
+                    if(data.isTaken){
+                        alert(data.message)
+                        return;
+                    }
+                },
+                error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                }
+            });
+          }
+        })
+    })
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer" ></script>
+{%if messages%} {%for message in messages%} {%if message.tags == "success"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "success",
+    title: "{{message}}",
+  });
+</script>
+{%elif message.tags == "warning"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "warning",
+    title: "{{message}}",
+  });
+</script>
+{%elif message.tags == "error"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "error",
+    title: "{{message}}",
+  });
+</script>
+{%else%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "info",
+    title: "{{message}}",
+  });
+</script>
+{%endif%} {%endfor%} {%endif%}
 {% endblock %}

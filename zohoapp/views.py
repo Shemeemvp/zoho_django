@@ -21185,51 +21185,53 @@ def newBankHolder(request):
     if request.user:
         if request.method == "POST":
             try:
-                hName = request.POST['holder_name']
-                hAliasName = request.POST['holder_alias_name']
-                hContact = request.POST['contact']
-                hEmail = request.POST['holder_email']
-                accType = request.POST['acc_type']
-                
-                bank = Bankcreation.objects.get(id = request.POST['bank_id'])
-                bName = request.POST['bank_name']
-                bAccNum = request.POST['acc_num']
-                bIFSC = request.POST['ifsc_code']
-                bSwiftCode = request.POST['swift_code']
-                bBranch = request.POST['branch_name']
+                if not BankHolders.objects.filter(user = request.user, holder_name = request.POST['holder_name']).exists():
+                    hName = request.POST['holder_name']
+                    hAliasName = request.POST['holder_alias_name']
+                    hContact = request.POST['contact']
+                    hEmail = request.POST['holder_email']
+                    accType = request.POST['acc_type']
+                    
+                    bank = Bankcreation.objects.get(id = request.POST['bank_id'])
+                    bName = request.POST['bank_name']
+                    bAccNum = request.POST['acc_num']
+                    bIFSC = request.POST['ifsc_code']
+                    bSwiftCode = request.POST['swift_code']
+                    bBranch = request.POST['branch_name']
 
-                chqRange = request.POST['chq_range']
-                chqPrint = request.POST['chq_print']
-                chqPrintConfig = request.POST['chq_print_config']
+                    chqRange = request.POST['chq_range']
+                    chqPrint = request.POST['chq_print']
+                    chqPrintConfig = request.POST['chq_print_config']
 
-                pan = request.POST['pan_number']
-                regType = request.POST['registration_type']
-                gstin = request.POST['gstin']
-                alterGst = request.POST['gst_alter']
+                    pan = request.POST['pan_number']
+                    regType = request.POST['registration_type']
+                    gstin = request.POST['gstin']
+                    alterGst = request.POST['gst_alter']
 
-                mName = request.POST['mailing_name']
-                mAddress = request.POST['mailing_address']
-                mCountry = request.POST['mailing_country']
-                mState = request.POST['mailing_state']
-                mPin = request.POST['mailing_pin']
+                    mName = request.POST['mailing_name']
+                    mAddress = request.POST['mailing_address']
+                    mCountry = request.POST['mailing_country']
+                    mState = request.POST['mailing_state']
+                    mPin = request.POST['mailing_pin']
 
-                obDate = request.POST['openbal_date']
-                obType = request.POST['openbal_type']
-                obAmount = float(request.POST['openbal_amount'])
+                    obDate = request.POST['openbal_date']
+                    obType = request.POST['openbal_type']
+                    obAmount = float(request.POST['openbal_amount'])
 
-                holder = BankHolders(
-                    user = User.objects.get(id = request.user.id), holder_name = hName, alias_name = hAliasName, phone_number = hContact, email_id = hEmail, acc_type = accType,
-                    bank = bank, bank_name = bName, acc_number = bAccNum, ifsc_code = bIFSC, swift_code = bSwiftCode, branch_name = bBranch,
-                    cheque_range = chqRange, cheque_printing = chqPrint, cheque_print_config = chqPrintConfig,
-                    pan_number = pan, registration_type = regType, gstin = gstin, gst_alter = alterGst,
-                    mail_name = mName, mail_address = mAddress, mail_country = mCountry, mail_state = mState, mail_pin = mPin,
-                    openbal_date = obDate, openbal_type = obType, openbal_amount = obAmount,
-                    status = 'Active',
-                )
-                holder.save()
-                return redirect(bankHolders)
-
-
+                    holder = BankHolders(
+                        user = User.objects.get(id = request.user.id), holder_name = hName, alias_name = hAliasName, phone_number = hContact, email_id = hEmail, acc_type = accType,
+                        bank = bank, bank_name = bName, acc_number = bAccNum, ifsc_code = bIFSC, swift_code = bSwiftCode, branch_name = bBranch,
+                        cheque_range = chqRange, cheque_printing = chqPrint, cheque_print_config = chqPrintConfig,
+                        pan_number = pan, registration_type = regType, gstin = gstin, gst_alter = alterGst,
+                        mail_name = mName, mail_address = mAddress, mail_country = mCountry, mail_state = mState, mail_pin = mPin,
+                        openbal_date = obDate, openbal_type = obType, openbal_amount = obAmount,
+                        status = 'Active',
+                    )
+                    holder.save()
+                    return redirect(bankHolders)
+                else:
+                    messages.error(request, f"{request.POST['holder_name']} already exists..try another..!")
+                    return redirect(addBankHolder)
             except Exception as e:
                 print(e)
                 return redirect(addBankHolder)
@@ -21294,6 +21296,19 @@ def bankHoldersSortByAccNum(request):
         try:
             context = {
                 'bank_holders':BankHolders.objects.filter(user = request.user).order_by('acc_number')
+            }
+            return render(request, 'bank_holders.html',context)
+        except Exception as e:
+            print(e)
+            return redirect(bankHolders)
+    return redirect('/')
+
+
+def bankHoldersSortByBankName(request):
+    if request.user:
+        try:
+            context = {
+                'bank_holders':BankHolders.objects.filter(user = request.user).order_by('bank_name')
             }
             return render(request, 'bank_holders.html',context)
         except Exception as e:
@@ -21367,69 +21382,71 @@ def updateBankHolder(request,id):
         if request.method == "POST":
             try:
                 holder = BankHolders.objects.get(id = id)
+                if request.POST['holder_name'] != holder.holder_name and BankHolders.objects.filter(user = request.user, holder_name = request.POST['holder_name']).exists():
+                    messages.error(request, f"{request.POST['holder_name']} already exists..try another..!")
+                    return redirect(editBankHolder,id)
+                else:
+                    hName = request.POST['holder_name']
+                    hAliasName = request.POST['holder_alias_name']
+                    hContact = request.POST['contact']
+                    hEmail = request.POST['holder_email']
+                    accType = request.POST['acc_type']
+                    
+                    bank = Bankcreation.objects.get(id = request.POST['bank_id'])
+                    bName = request.POST['bank_name']
+                    bAccNum = request.POST['acc_num']
+                    bIFSC = request.POST['ifsc_code']
+                    bSwiftCode = request.POST['swift_code']
+                    bBranch = request.POST['branch_name']
 
-                hName = request.POST['holder_name']
-                hAliasName = request.POST['holder_alias_name']
-                hContact = request.POST['contact']
-                hEmail = request.POST['holder_email']
-                accType = request.POST['acc_type']
-                
-                bank = Bankcreation.objects.get(id = request.POST['bank_id'])
-                bName = request.POST['bank_name']
-                bAccNum = request.POST['acc_num']
-                bIFSC = request.POST['ifsc_code']
-                bSwiftCode = request.POST['swift_code']
-                bBranch = request.POST['branch_name']
+                    chqRange = request.POST['chq_range']
+                    chqPrint = request.POST['chq_print']
+                    chqPrintConfig = request.POST['chq_print_config']
 
-                chqRange = request.POST['chq_range']
-                chqPrint = request.POST['chq_print']
-                chqPrintConfig = request.POST['chq_print_config']
+                    pan = request.POST['pan_number']
+                    regType = request.POST['registration_type']
+                    gstin = "" if request.POST['registration_type'] != 'Regular' and request.POST['registration_type'] != 'Composition' else request.POST['gstin']
+                    alterGst = request.POST['gst_alter']
 
-                pan = request.POST['pan_number']
-                regType = request.POST['registration_type']
-                gstin = "" if request.POST['registration_type'] != 'Regular' and request.POST['registration_type'] != 'Composition' else request.POST['gstin']
-                alterGst = request.POST['gst_alter']
+                    mName = request.POST['mailing_name']
+                    mAddress = request.POST['mailing_address']
+                    mCountry = request.POST['mailing_country']
+                    mState = request.POST['mailing_state']
+                    mPin = request.POST['mailing_pin']
 
-                mName = request.POST['mailing_name']
-                mAddress = request.POST['mailing_address']
-                mCountry = request.POST['mailing_country']
-                mState = request.POST['mailing_state']
-                mPin = request.POST['mailing_pin']
+                    obDate = request.POST['openbal_date']
+                    obType = request.POST['openbal_type']
+                    obAmount = float(request.POST['openbal_amount'])
 
-                obDate = request.POST['openbal_date']
-                obType = request.POST['openbal_type']
-                obAmount = float(request.POST['openbal_amount'])
-
-                holder.holder_name = hName 
-                holder.alias_name = hAliasName
-                holder.phone_number = hContact
-                holder.email_id = hEmail
-                holder.acc_type = accType
-                holder.bank = bank
-                holder.bank_name = bName
-                holder.acc_number = bAccNum
-                holder.ifsc_code = bIFSC
-                holder.swift_code = bSwiftCode
-                holder.branch_name = bBranch
-                holder.cheque_range = chqRange
-                holder.cheque_printing = chqPrint
-                holder.cheque_print_config = chqPrintConfig
-                holder.pan_number = pan
-                holder.registration_type = regType
-                holder.gstin = gstin
-                holder.gst_alter = alterGst
-                holder.mail_name = mName
-                holder.mail_address = mAddress
-                holder.mail_country = mCountry
-                holder.mail_state = mState
-                holder.mail_pin = mPin
-                holder.openbal_date = obDate
-                holder.openbal_type = obType
-                holder.openbal_amount = obAmount
-                
-                holder.save()
-                return redirect(viewBankHolder,id)
-
+                    holder.holder_name = hName 
+                    holder.alias_name = hAliasName
+                    holder.phone_number = hContact
+                    holder.email_id = hEmail
+                    holder.acc_type = accType
+                    holder.bank = bank
+                    holder.bank_name = bName
+                    holder.acc_number = bAccNum
+                    holder.ifsc_code = bIFSC
+                    holder.swift_code = bSwiftCode
+                    holder.branch_name = bBranch
+                    holder.cheque_range = chqRange
+                    holder.cheque_printing = chqPrint
+                    holder.cheque_print_config = chqPrintConfig
+                    holder.pan_number = pan
+                    holder.registration_type = regType
+                    holder.gstin = gstin
+                    holder.gst_alter = alterGst
+                    holder.mail_name = mName
+                    holder.mail_address = mAddress
+                    holder.mail_country = mCountry
+                    holder.mail_state = mState
+                    holder.mail_pin = mPin
+                    holder.openbal_date = obDate
+                    holder.openbal_type = obType
+                    holder.openbal_amount = obAmount
+                    
+                    holder.save()
+                    return redirect(viewBankHolder,id)
 
             except Exception as e:
                 print(e)
@@ -21506,9 +21523,12 @@ def getHolderDetails(request):
     if request.user:
         try:
             holderId = request.POST.get('id')
-            holderDetails = BankHolders.objects.get(id = int(holderId))
-            return JsonResponse({'status':True, 'id':holderDetails.id, 'acc_number':holderDetails.acc_number})
-
+            if not LoanAccounts.objects.filter(user = request.user, holder = BankHolders.objects.get(id = holderId)).exists():
+                holderDetails = BankHolders.objects.get(id = int(holderId))
+                return JsonResponse({'status':True, 'isTaken':"false", 'id':holderDetails.id, 'acc_number':holderDetails.acc_number})
+            else:
+                holderDetails = BankHolders.objects.get(id = request.POST.get('id'))
+                return JsonResponse({'status':False, 'isTaken':'true','message':f"Loan account already exists for {holderDetails.holder_name}, try additional loan..!"})
         except Exception as e:
             print(e)
             return JsonResponse({'status':False})
@@ -21541,8 +21561,9 @@ def createLoanAccount(request):
     if request.user:
         try:
             if request.method == 'POST':
+                holder = BankHolders.objects.get(id = request.POST['acc_name'])
                 if not LoanAccounts.objects.filter(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name'])).exists():
-                    holder = BankHolders.objects.get(id = request.POST['acc_name'])
+                    
                     acc_name = holder.holder_name
                     acc_number = request.POST['loan_acc_number']
                     lender_bank = request.POST['lender_bank']
@@ -21585,22 +21606,22 @@ def createLoanAccount(request):
                     return redirect(loanAccounts)
                 else:
                     # if account with holder already exists, it will added as an additional loan to the account.
-                    account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
+                    # account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
                     
-                    # adjusting balance
-                    account.balance += float(request.POST['loan_amount'])
-                    account.save()
-                    interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
-                    #Transaction for additional loan
-                    trans = LoanAccountTransactions(
-                        user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
-                        total = float(request.POST['loan_amount']) + interest, balance = account.balance
-                    )
-                    trans.save()
+                    # # adjusting balance
+                    # account.balance += float(request.POST['loan_amount'])
+                    # account.save()
+                    # interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
+                    # #Transaction for additional loan
+                    # trans = LoanAccountTransactions(
+                    #     user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
+                    #     total = float(request.POST['loan_amount']) + interest, balance = account.balance
+                    # )
+                    # trans.save()
 
                     
 
-                    messages.info(request, f'The amount {trans.principal} has been added as an Additional Loan as the account for {account.acc_name} already exists.')
+                    messages.info(request, f'Loan Account for {holder.holder_name} already exists.. Try Additional Loan.!')
                     return redirect(loanAccounts)
         except Exception as e:
             print(e)
@@ -21659,9 +21680,9 @@ def editLoanAccount(request, id):
 def updateLoanAccount(request,id):
     if request.user:
         try:
+            holder = BankHolders.objects.get(id = request.POST['acc_name'])
             if request.method == 'POST':
                 account = LoanAccounts.objects.get(id = id)
-                holder = BankHolders.objects.get(id = request.POST['acc_name'])
                 acc_name = holder.holder_name
                 acc_number = request.POST['loan_acc_number']
                 lender_bank = request.POST['lender_bank']
@@ -21743,21 +21764,21 @@ def updateLoanAccount(request,id):
                         return redirect(viewLoanAccount,id)
                     else:
                         # if account with holder already exists, it will added as an additional loan to the account.
-                        account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
+                        # account = LoanAccounts.objects.get(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name']))
                         
-                        # adjusting balance
-                        account.balance += float(request.POST['loan_amount'])
-                        account.save()
-                        interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
-                        #Transaction for additional loan
-                        trans = LoanAccountTransactions(
-                            user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
-                            total = float(request.POST['loan_amount']) + interest,balance = account.balance
-                        )
-                        trans.save()
+                        # # adjusting balance
+                        # account.balance += float(request.POST['loan_amount'])
+                        # account.save()
+                        # interest = 0 if request.POST['interest_amount'] == '' else float(request.POST['interest_amount'])
+                        # #Transaction for additional loan
+                        # trans = LoanAccountTransactions(
+                        #     user = User.objects.get(id = request.user.id), loan_account = account, type = 'Additional Loan', date = date.today(), principal = float(request.POST['loan_amount']), interest = float(request.POST['interest_amount']),
+                        #     total = float(request.POST['loan_amount']) + interest,balance = account.balance
+                        # )
+                        # trans.save()
 
-
-                        messages.info(request, f'The amount {trans.principal} has been added as an Additional Loan as the account for {account.acc_name} already exists.')
+                        messages.info(request, f'Loan Account for {holder.holder_name} already exists.. Try with another holder or Additional Loan.!')
+                        # messages.info(request, f'The amount {trans.principal} has been added as an Additional Loan as the account for {account.acc_name} already exists.')
                         return redirect(viewLoanAccount,id)
         except Exception as e:
             print(e)
@@ -22096,5 +22117,18 @@ def loanAccountStatementPdf(request,id):
         if pisa_status.err:
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
         return response
+    return redirect('/')
+
+
+def checkHolderName(request):
+    if request.user:
+        try:
+            name = request.GET['name']
+            if BankHolders.objects.filter(user = request.user, holder_name = name).exists():
+                return JsonResponse({'isTaken':True, 'message':f"'{name}' already exists.. Try another.!"})
+            return JsonResponse({'isTaken':False})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'isTaken':False})
     return redirect('/')
 # --------------------------------------end-----------------------------------------------------

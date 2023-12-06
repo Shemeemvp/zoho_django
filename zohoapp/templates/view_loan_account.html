@@ -17,12 +17,12 @@
         color: azure;
     }
 
-    a:hover {
+    /* a:hover {
         color: rgb(218, 164, 48);
         text-decoration: none;
-    }
+    } */
 
-    .tab a {
+    /* .tab a {
 
         font-family: inherit;
         background-color: inherit;
@@ -33,9 +33,9 @@
         transition: 0.3s;
         color: azure;
         border: none;
-    }
+    } */
 
-    .btn{
+    /* .btn{
         color: rgb(218, 164, 48);
         outline-color: azure;
         border: 2px solid rgb(167, 122, 24);
@@ -45,7 +45,7 @@
         color: white;
         background-color: rgb(167, 117, 10);
         outline: none;   
-    }
+    } */
 
     .modal{
       z-index: 9999;
@@ -63,7 +63,7 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Left Side: Table -->
-        <div class="col-md-4" style="background-color: #191c24;">
+        <div class="col-md-4">
             <div class="row">
                 <div class="col-md-12 py-2">
                     <a class="text-white" style="font-size: 1.5rem;">All Loan Accounts</a>
@@ -75,19 +75,19 @@
                     <input type="text" id="search" placeholder="Search..." class="form-control text-dark bg-light" autocomplete="off">
                 </div>
                 <div class="col-md-4 d-flex justify-content-end align-items-center">
-                    <a class="btn btn-primary mx-1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button"><i class="fa fa-filter mt-0 mx-1 "></i></a>
+                    <a class="btn btn-outline-warning mx-1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button"><i class="fa fa-filter mt-0 mx-1 "></i></a>
                     <div class="dropdown-menu ">
                         <a class="dropdown-item text-white" href="{% url 'loanAccountNameAsc' account.id %}">Name A-Z</a>
                         <a class="dropdown-item text-white" href="{% url 'loanAccountNameDesc' account.id %}">Name Z-A</a>
                     </div>
-                    <a class="btn btn-primary mr-1" role="button" href="{%url 'addLoanAccount'%}"><i class="fa fa-plus"></i>
+                    <a class="btn btn-outline-warning mr-1" role="button" href="{%url 'addLoanAccount'%}"><i class="fa fa-plus"></i>
                         <span class="mt-2"></span>
                     </a>
                 </div>
             </div>
         
             <div class="row mt-3">
-                <div class="col-md-12" style= "background-color: #191c24; overflow-y: auto;">
+                <div class="col-md-12" style= "overflow-y: auto;">
                     <table class="table table-responsive text-white" id="table">
                         <thead>
                             <tr>
@@ -107,36 +107,36 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8" style="background-color: rgb(75, 75, 75);">
+        <div class="col-md-8">
             <div class="transactions_section" id="transactionSection" style="display: block;">
                 <div class="row">
                     <div class="col-md-6 d-flex justify-content-start align-items-start p-2 gap-2">
-                        <a class="p-1 text-white" role="button"  style="background-color: orange;"><i class="fas fa-arrows-alt-h me-1"></i>Transactions</a>
-                        <a class="p-1 text-white" role="button"  style="background-color: #6e727bfa;" onclick="showStatements()"><i class="fas fa-file-alt me-1"></i>Statement</a>
+                        <a class="btn text-white" style="background-color: chocolate; border: none;"><i class="fas fa-arrows-alt-h me-1"></i>Transactions</a>
+                        <a class="btn" style="background-color: white; border: none; color: #000;" onclick="showStatements()"><i class="fas fa-file-alt me-1"></i>Statement</a>
                     </div>
                 
                     <div class="col-md-6 d-flex justify-content-end align-items-start p-2 gap-2">
-                        <a style="color: orange; width: 2rem;" class="btn btn-warning text-dark p-2" href="{% url 'editLoanAccount' account.id %}">
+                        <a class="btn btn-outline-warning" href="{% url 'editLoanAccount' account.id %}">
                             <i class="fa fa-pencil"></i>
                         </a>
                         <a href="{% url 'deleteLoanAccount' account.id %}">
-                            <button style="color: orange; width: 2rem;" class="btn btn-warning text-dark p-2" onclick="return confirm('Are you sure you want to delete this Loan Account.?')"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-outline-warning" onclick="return confirm('Are you sure you want to delete this Loan Account.?')"><i class="fa fa-trash"></i></button>
                         </a>
-                        <a class="btn btn-warning text-dark p-2" style="width: 6rem;" data-bs-toggle="dropdown" aria-haspopup="true" id="paymentDropdown" aria-expanded="false" role="button">Payment</a>
+                        <a class="btn btn-outline-warning" data-bs-toggle="dropdown" aria-haspopup="true" id="paymentDropdown" aria-expanded="false" role="button">Payment</a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item text-white" href="#makePayment" data-bs-toggle="modal">Make a payment</a>
                             <a class="dropdown-item text-white" href="#additionalLoan" data-bs-toggle="modal">Additional Loan</a>
                         </div>
                         {% if account.status == 'Inactive' %}
-                        <a class="btn btn-warning text-dark p-2" style="width: 6rem;" href="{% url 'loanAccountStatusActive' account.id %}"  id="inactiveButton">Inactive</a>
+                        <a class="btn btn-outline-warning" href="{% url 'loanAccountStatusActive' account.id %}"  id="inactiveButton">Inactive</a>
                         {% elif account.status == 'Active' %}
-                        <a class="btn btn-warning text-dark p-2" style="width: 6rem;" href="{% url 'loanAccountStatusInactive' account.id %}"  id="activeButton">Active</a>
+                        <a class="btn btn-outline-warning" href="{% url 'loanAccountStatusInactive' account.id %}"  id="activeButton">Active</a>
                         {% endif %}
                 
                     </div>
                 </div>
-                <div class="card border-0">
-                    <div class="card-header p-0" style="background-color: rgb(75, 75, 75);">
+                <div class="card border-0" style="background-color: transparent;">
+                    <div class="card-header p-0">
                         <div class="row pt-3">
                             <div class="col-6 d-flex justify-content-between">
                                 <p>Name:</p>
@@ -156,24 +156,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body p-0" style="background-color: rgb(75, 75, 75);">
+                    <div class="card-body p-0">
                         <div class="row pt-3">
                             <div class="col-12 d-flex justify-content-between">
-                                <h4 class="mt-2 mb-3">Transactions</h4>
+                                <h3 class="mt-2 mb-3">Transactions</h3>
                             </div>
                             <div class="col-md-12 d-flex justify-content-between">
                                 <div class="col-md-5">
-                                    <input type="text" id="trans_table_search" placeholder="Search..." class="trns_inp form-control text-dark bg-light" autocomplete="off">
+                                    <input type="text" id="trans_table_search" placeholder="Search..." class="trns_inp form-control text-white bg-transparent" autocomplete="off">
                                 </div>
                                 <div class="col-md-5">
                                     <form action="{% url 'transactionsInBetween' account.id %}" method="get" class="form d-flex align-items-center" id="trans_filter_form">
-                                        <input type="date" name="trans_from_date" value="{{from}}" class="form-control trns_inp text-dark trans_date_inputs" id="transFromDate" style="font-size: 0.85rem;">
+                                        <input type="date" name="trans_from_date" value="{{from}}" class="form-control trns_inp text-white trans_date_inputs bg-transparent" id="transFromDate" style="font-size: 0.85rem;">
                                         <label for="" class="mx-1">TO</label>
-                                        <input type="date" name="trans_to_date" value="{{to}}" class="form-control trns_inp text-dark trans_date_inputs" id="transToDate" style="font-size: 0.85rem;">
+                                        <input type="date" name="trans_to_date" value="{{to}}" class="form-control trns_inp text-white trans_date_inputs bg-transparent" id="transToDate" style="font-size: 0.85rem;">
                                     </form>
                                 </div>
                             </div>
-                            <div class="col-md-12 mt-2" style= "background-color: #4b4b4b; max-height: 60vh;overflow-y: auto;">
+                            <div class="col-md-12 mt-4" style= "background-color: #4b4b4b; max-height: 60vh;overflow-y: auto;">
                                 <table class="table table-responsive text-white" id="transactionsTable">
                                     <thead>
                                         <tr>
@@ -215,18 +215,20 @@
             <div class="statement_section" id="statementSection" style="display: none;">
                 <div class="row">
                     <div class="col-md-6 d-flex justify-content-start align-items-start p-2 gap-2">
-                        <a class="p-1 text-white" role="button"  style="background-color: #6e727bfa;" onclick="showTransactions()"><i class="fas fa-arrows-alt-h me-1"></i>Transactions</a>
-                        <a class="p-1 text-white" role="button"  style="background-color: orange;"><i class="fas fa-file-alt me-1"></i>Statement</a>
+                        <!-- <a class="p-1 text-white" role="button"  style="background-color: #6e727bfa;" onclick="showTransactions()"><i class="fas fa-arrows-alt-h me-1"></i>Transactions</a> -->
+                        <!-- <a class="p-1 text-white" role="button"  style="background-color: orange;"><i class="fas fa-file-alt me-1"></i>Statement</a> -->
+                        <a class="btn" style="background-color: white; border: none; color: #000;" onclick="showTransactions()"><i class="fas fa-arrows-alt-h me-1"></i>Transactions</a>
+                        <a class="btn text-white" style="background-color: chocolate; border: none; color: #000;"><i class="fas fa-file-alt me-1"></i>Statement</a>
                     </div>
                 
                     <div class="col-md-6 d-flex justify-content-end align-items-start p-2 gap-2">
-                        <a style="color: orange; width: 2rem;" title="PRINT" class="btn btn-warning text-dark p-2" onclick="printSpecificArea('printSection')" href="#">
+                        <a title="PRINT" class="btn btn-outline-warning" onclick="printSpecificArea('printSection')" href="#">
                             <i class="fa fa-print"></i>
                         </a>
-                        <a style="color: orange; width: 2rem;" title="PDF" class="btn btn-warning text-dark p-2" href="{% url 'loanAccountStatementPdf' account.id %}">
+                        <a title="PDF" class="btn btn-outline-warning" href="{% url 'loanAccountStatementPdf' account.id %}">
                             <i class="fa fa-file-pdf"></i>
                         </a>
-                        <a style="color: orange; width: 2rem;" data-bs-toggle="dropdown" aria-haspopup="true" class="btn btn-warning text-dark p-2" href="">
+                        <a data-bs-toggle="dropdown" aria-haspopup="true" class="btn btn-outline-warning" href="#">
                             <i class="fa fa-share-alt"></i>
                         </a>
                         <div class="dropdown-menu">
@@ -234,9 +236,9 @@
                             <a class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#shareToEmail">Mail</a>
                         </div>
                         {% if account.status == 'Inactive' %}
-                        <a class="btn btn-warning text-dark p-2" style="width: 6rem;" href="{% url 'loanAccountStatusActive' account.id %}"  id="inactiveButton">Inactive</a>
+                        <a class="btn btn-outline-warning" href="{% url 'loanAccountStatusActive' account.id %}"  id="inactiveButton">Inactive</a>
                         {% elif account.status == 'Active' %}
-                        <a class="btn btn-warning text-dark p-2" style="width: 6rem;" href="{% url 'loanAccountStatusInactive' account.id %}"  id="activeButton">Active</a>
+                        <a class="btn btn-outline-warning" href="{% url 'loanAccountStatusInactive' account.id %}"  id="activeButton">Active</a>
                         {% endif %}
                 
                     </div>
@@ -382,7 +384,7 @@
 
 <!-- Make A Payment Modal -->
 <div class="modal fade" id="makePayment">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
       <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
         <div class="modal-header " style="background: rgb(32, 35, 37);">
             <h3 class="m-3 text-uppercase">Make Payment</h3>
@@ -477,7 +479,7 @@
 
   <!-- Additional Loan Modal -->
 <div class="modal fade" id="additionalLoan">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
       <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
         <div class="modal-header " style="background: rgb(32, 35, 37);">
             <h3 class="m-3 text-uppercase">Additional Loan</h3>
@@ -857,5 +859,38 @@
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
-  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer" ></script>
+{%if messages%} {%for message in messages%} {%if message.tags == "success"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "success",
+    title: "{{message}}",
+  });
+</script>
+{%elif message.tags == "warning"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "warning",
+    title: "{{message}}",
+  });
+</script>
+{%elif message.tags == "error"%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "error",
+    title: "{{message}}",
+  });
+</script>
+{%else%}
+<script>
+  swal({
+    position: "top-end",
+    icon: "info",
+    title: "{{message}}",
+  });
+</script>
+{%endif%} {%endfor%} {%endif%}
 {%endblock%}
