@@ -12,10 +12,27 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
  
 <style>
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        background-color: white;
+    }
     a {
         list-style: none;
         color: azure;
     }
+    .statement_table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .statement_table th{
+        font-weight: 500;
+    }
+    
+    .statement_table th, td {
+        padding: 10px 3px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
 
     /* a:hover {
         color: rgb(218, 164, 48);
@@ -173,7 +190,7 @@
                                     </form>
                                 </div>
                             </div>
-                            <div class="col-md-12 mt-4" style= "background-color: #4b4b4b; max-height: 60vh;overflow-y: auto;">
+                            <div class="col-md-12 mt-4" style= " max-height: 60vh;overflow-y: auto;">
                                 <table class="table table-responsive text-white" id="transactionsTable">
                                     <thead>
                                         <tr>
@@ -222,19 +239,19 @@
                     </div>
                 
                     <div class="col-md-6 d-flex justify-content-end align-items-start p-2 gap-2">
-                        <a title="PRINT" class="btn btn-outline-warning" onclick="printSpecificArea('printSection')" href="#">
-                            <i class="fa fa-print"></i>
-                        </a>
-                        <a title="PDF" class="btn btn-outline-warning" href="{% url 'loanAccountStatementPdf' account.id %}">
-                            <i class="fa fa-file-pdf"></i>
-                        </a>
                         <a data-bs-toggle="dropdown" aria-haspopup="true" class="btn btn-outline-warning" href="#">
                             <i class="fa fa-share-alt"></i>
                         </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item text-white">{% post_to_whatsapp object_or_url "WhatsApp" %}</a>
-                            <a class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#shareToEmail">Mail</a>
+                            <a class="dropdown-item text-white" data-bs-toggle="modal" data-bs-target="#shareToEmail" style="cursor: pointer;">Mail</a>
                         </div>
+                        <a title="PRINT" class="btn btn-outline-warning" onclick="templatePrint()" href="#">
+                            <i class="fa fa-print"></i>
+                        </a>
+                        <a title="PDF" class="btn btn-outline-warning" onclick="exportToPDF()" href="#">
+                            <i class="fa fa-file-pdf"></i>
+                        </a>
                         {% if account.status == 'Inactive' %}
                         <a class="btn btn-outline-warning" href="{% url 'loanAccountStatusActive' account.id %}"  id="inactiveButton">Inactive</a>
                         {% elif account.status == 'Active' %}
@@ -243,8 +260,8 @@
                 
                     </div>
                 </div>
-                <div class="card border-0">
-                    <div class="card-header p-0" style="background-color: rgb(75, 75, 75);">
+                <div class="card border-0 bg-transparent">
+                    <!-- <div class="card-header p-0" style="background-color: rgb(75, 75, 75);">
                         <div class="row pt-3">
                             <div class="col-6 d-flex justify-content-between">
                                 <p>Name:</p>
@@ -263,121 +280,192 @@
                                 <span>{{account.balance}}</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body p-0" style="background-color: rgb(75, 75, 75);">
+                    </div> -->
+                    <div class="card-body p-0">
                         <div class="row pt-3">
-                            <div class="col-12 d-flex justify-content-between">
+                            <!-- <div class="col-12 d-flex justify-content-between">
                                 <h4 class="mt-2 mb-3">Statement</h4>
-                            </div>
-                            <div class="col-md-12 d-flex justify-content-between">
-                                <div class="col-md-5">
+                            </div> -->
+                            <div class="col-md-12 d-flex justify-content-end">
+                                <!-- <div class="col-md-5">
                                     <input type="text" id="stmnt_table_search" placeholder="Search..." class="trns_inp form-control text-dark bg-light" autocomplete="off">
-                                </div>
+                                </div> -->
                                 <div class="col-md-5">
                                     <form action="{% url 'transactionsInBetween' account.id %}" method="get" class="form d-flex align-items-center" id="stmnt_filter_form">
-                                        <input type="date" name="trans_from_date" value="{{from}}" class="form-control trns_inp text-dark stmnt_date_inputs" id="stFromDate" style="font-size: 0.85rem;">
+                                        <input type="date" name="trans_from_date" value="{{from}}" class="bg-transparent form-control trns_inp text-white stmnt_date_inputs" id="stFromDate" style="font-size: 0.85rem;">
                                         <label for="" class="mx-1">TO</label>
                                         <input type="text" name="statement"hidden>
-                                        <input type="date" name="trans_to_date" value="{{to}}" class="form-control trns_inp text-dark stmnt_date_inputs" id="stToDate" style="font-size: 0.85rem;">
+                                        <input type="date" name="trans_to_date" value="{{to}}" class="bg-transparent form-control trns_inp text-white stmnt_date_inputs" id="stToDate" style="font-size: 0.85rem;">
                                     </form>
                                 </div>
-                            </div>
-                            <div class="col-md-12 mt-2" style= "background-color: #4b4b4b; max-height: 60vh;overflow-y: auto;">
-                                <table class="table table-responsive text-white" id="statementTable">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-white">Date</th>
-                                            <th class="text-white">Type</th>
-                                            <th class="text-white">Name</th>
-                                            <th class="text-white">Principal</th>
-                                            <th class="text-white">Interest</th>
-                                            <th class="text-white">Total Amount</th>
-                                            <th class="text-white">Balance</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for item in transactions %}
-                                        <tr>
-                                            <td>{{item.date}}</td>
-                                            <td>{{item.type}}</td>
-                                            <td>{{item.loan_account.acc_name}}</td>
-                                            <td>{{item.principal}}</td>
-                                            <td>{{item.interest}}</td>
-                                            <td>{{item.total}}</td>
-                                            <td>{{item.balance}}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- statement template -->
+
+                <section id="statementTemplate" style="background-color: rgb(255, 221, 176);" class="p-2 mt-3">
+                    <header style="	background-color: #8b3131; border-radius: 0.6rem;" class="py-3 d-flex justify-content-center">
+                        <div class="acc_status col-md-4 d-flex align-items-center">
+                            <span class="px-3 py-2 ms-2 text-white" style="background-color: #964848;">{{account.status}}</span>
+                        </div>
+                        <div style="background: #8b3131;color: white;" class="company-info text-center col-md-4">
+                            {% if company.profile_pic %}<img class="ms-2 img-fluid" style="border-radius: 50%; width: 3rem;" src="{{company.profile_pic.url}}" alt="Company Logo">{% endif %}
+                            <h4 class="text-white mb-0">{{company.company_name}}</h4>
+                            <p class="text-white mb-0"> {{company.address}} - {{company.city}}</p>
+                            <p class="text-white mb-0">{{company.company_email}}</p>
+                            <p class="text-white mb-0">{{company.contact_number}}</p>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </header>
+                    <div class="statement-container pt-3 px-1">
+                        <h3 class="text-dark">Statement</h3>
+                        <div class="statement-header pt-3">
+                            <div class="statement-details text-dark">
+                                <table>
+                                    <tr>
+                                        <td class="table-cell text-black" style="border: none;">Name</td>
+                                        <td class="table-cell text-black" style="border: none;">:</td>
+                                        <td class="table-cell text-black" style="border: none;">{{account.acc_name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="table-cell text-black" style="border: none;">Account #</td>
+                                        <td class="table-cell text-black" style="border: none;">:</td>
+                                        <td class="table-cell text-black" style="border: none;">{{account.acc_number}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="table-cell text-black" style="border: none;">Balance</td>
+                                        <td class="table-cell text-black" style="border: none;">:</td>
+                                        <td class="table-cell text-black" style="border: none;">{{account.balance}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="statement_table my-2">
+                            <table class="text-dark" id="statementTable" style="width: 100%;">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="text-dark">Date</th>
+                                        <th class="text-dark">Type</th>
+                                        <th class="text-dark">Name</th>
+                                        <th class="text-dark">Principal</th>
+                                        <th class="text-dark">Interest</th>
+                                        <th class="text-dark">Total Amount</th>
+                                        <th class="text-dark">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-transparent">
+                                    {% for item in transactions %}
+                                    <tr style="border-color: lightgray;">
+                                        <td>{{item.date}}</td>
+                                        <td>{{item.type}}</td>
+                                        <td>{{item.loan_account.acc_name}}</td>
+                                        <td>{{item.principal}}</td>
+                                        <td>{{item.interest}}</td>
+                                        <td>{{item.total}}</td>
+                                        <td>{{item.balance}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+  
+                    <footer class="my-5">
+                        <p class="text-dark text-center">&copy; Zoho Books 2023 | Info park kakkanad kochi, Ernamkulam, kerala India 12345 | Phone: (123) 456-7890 | Email: info@zohodjango.com</p>
+                    </footer>
+                </section>
+
+
+
             </div>
 
         </div>
     </div>
 </div>
 
-
 <div id="printSection" style="display: none;">
-    <div class="card border-0" style="background-color: transparent !important;">
-        <div class="card-header px-3" style="background-color: rgb(180, 180, 180);">
-            <div class="row text-dark pt-3">
-                <div class="col-6 d-flex justify-content-between">
-                    <p>Name:</p>
-                    <span class="fw-bold fs-5 text-dark">{{account.acc_name}}</span>
+    <section id="statementTemplate" class="p-2 mt-3">
+        <header style="	background-color: #8b3131; border-radius: 0.6rem; padding: 1rem 0rem;" class="d-flex justify-content-center">
+            <!-- <div class="acc_status col-md-4 d-flex align-items-center">
+                <span class="px-3 py-2 ms-2 text-white" style="background-color: #964848;">{{account.status}}</span>
+            </div> -->
+            <center>
+                <div style="background: #8b3131;color: white;" class="company-info text-center col-md-4">
+                    {% if company.profile_pic %}<img class="ms-2 img-fluid" style="border-radius: 50%; width: 3rem;" src="{{company.profile_pic.url}}" alt="Company Logo">{% endif %}
+                    <h4 class="text-white mb-0">{{company.company_name}}</h4>
+                    <p class="text-white mb-0"> {{company.address}} - {{company.city}}</p>
+                    <p class="text-white mb-0">{{company.company_email}}</p>
+                    <p class="text-white mb-0">{{company.contact_number}}</p>
                 </div>
-                <div class="col-6 d-flex justify-content-between">
-                    <p>Lender Bank:</p>
-                    <span>{{account.lender_bank}}</span>
-                </div>
-                <div class="col-6 d-flex justify-content-between">
-                    <p>Account #:</p>
-                    <span>{{account.acc_number}}</span>
-                </div>
-                <div class="col-6 d-flex justify-content-between">
-                    <p>Balance:</p>
-                    <span>{{account.balance}}</span>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row pt-3">
-                <div class="col-12 d-flex justify-content-between">
-                    <h4 class="mt-2 mb-3 text-dark">Statement</h4>
-                </div>
-                <div class="col-md-12 mt-2">
-                    <table class="table table-bordered text-dark" id="statementTable">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Name</th>
-                                <th>Principal</th>
-                                <th>Interest</th>
-                                <th>Total Amount</th>
-                                <th>Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in transactions %}
-                            <tr>
-                                <td>{{item.date}}</td>
-                                <td>{{item.type}}</td>
-                                <td>{{item.loan_account.acc_name}}</td>
-                                <td>{{item.principal}}</td>
-                                <td>{{item.interest}}</td>
-                                <td>{{item.total}}</td>
-                                <td>{{item.balance}}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
+            </center>
+            <div class="col-md-4"></div>
+        </header>
+        <div class="statement-container pt-3 px-1">
+            <h3 class="text-dark">Statement</h3>
+            <div class="statement-header pt-3">
+                <div class="statement-details text-dark" style="margin: 1rem 0rem;">
+                    <table>
+                        <tr>
+                            <td class="table-cell text-black" style="border: none;">Name</td>
+                            <td class="table-cell text-black" style="border: none;">:</td>
+                            <td class="table-cell text-black" style="border: none;">{{account.acc_name}}</td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell text-black" style="border: none;">Status</td>
+                            <td class="table-cell text-black" style="border: none;">:</td>
+                            <td class="table-cell text-black" style="border: none;">{{account.status}}</td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell text-black" style="border: none;">Account #</td>
+                            <td class="table-cell text-black" style="border: none;">:</td>
+                            <td class="table-cell text-black" style="border: none;">{{account.acc_number}}</td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell text-black" style="border: none;">Balance</td>
+                            <td class="table-cell text-black" style="border: none;">:</td>
+                            <td class="table-cell text-black" style="border: none;">{{account.balance}}</td>
+                        </tr>
                     </table>
                 </div>
             </div>
+            <div class="statement_table my-2">
+                <table class="text-dark" id="statementTable" style="width: 100%; border-collapse: collapse;">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #000;" class="text-dark">Date</th>
+                            <th style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #000;" class="text-dark">Type</th>
+                            <th style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #000;" class="text-dark">Name</th>
+                            <th style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #000;" class="text-dark">Principal</th>
+                            <th style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #000;" class="text-dark">Interest</th>
+                            <th style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #000;" class="text-dark">Total Amount</th>
+                            <th style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #000;" class="text-dark">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-transparent">
+                        {% for item in transactions %}
+                        <tr style="border-color: lightgray;">
+                            <td style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #ddd;">{{item.date}}</td>
+                            <td style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #ddd;">{{item.type}}</td>
+                            <td style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #ddd;">{{item.loan_account.acc_name}}</td>
+                            <td style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #ddd;">{{item.principal}}</td>
+                            <td style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #ddd;">{{item.interest}}</td>
+                            <td style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #ddd;">{{item.total}}</td>
+                            <td style="padding: 10px 3px;text-align: left;border-bottom: 1px solid #ddd;">{{item.balance}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
         </div>
-    </div>
+
+        <footer class="my-5">
+            <p class="text-dark text-center">&copy; Zoho Books 2023 | Info park kakkanad kochi, Ernamkulam, kerala India 12345 | Phone: (123) 456-7890 | Email: info@zohodjango.com</p>
+        </footer>
+    </section>
 </div>
 
 
@@ -589,7 +677,7 @@
           </form>
         </div>
         <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
-          <button type="submit" id="share_with_email" class="submitShareEmailBtn btn btn-outline-info w-50 text-uppercase">SEND MAIL</button>
+          <button type="submit" id="share_with_email" class="submitShareEmailBtn btn btn-outline-warning w-50 text-uppercase">SEND MAIL</button>
         </div>
       </div>
     </div>
@@ -849,10 +937,57 @@
         document.body.innerHTML = originalContents;
     }
 
-    // function exportToPDF(){
-    //     var content = document.getElementById('printSection');
-    //     html2pdf().from(content).save('Statement_'+`{{account.acc_name}}_{{account.acc_number}}`+'.pdf');
-    // }
+    function templatePrint(){
+        var contentToPrint = document.getElementById('printSection').innerHTML;
+        var printWindow = window.open('', '_blank');
+
+        // Write the HTML content to the new window
+        printWindow.document.write(contentToPrint);
+
+        // Close the document stream to finish writing the content
+        printWindow.document.close();
+        
+        printWindow.onafterprint = function () {
+            printWindow.close();
+        };
+
+        // Print the new window
+        printWindow.print();
+    }
+
+    function exportToPDF(){
+        var content = document.getElementById('statementTemplate');
+        html2pdf().from(content).save('Statement_'+`{{account.acc_name}}_{{account.acc_number}}`+'.pdf');
+    }
+
+    $(document).ready(function(){
+        var date1 = "";
+        $('#transFromDate').on('change',function(){
+            date1 = $(this).val()
+            $('#transToDate').prop('min',date1)
+        })
+    })
+    $(document).ready(function(){
+        var date2 = "";
+        $('#transToDate').on('change',function(){
+            date2 = $(this).val()
+            $('#transFromDate').prop('max',date2)
+        })
+    })
+    $(document).ready(function(){
+        var date1 = "";
+        $('#stFromDate').on('change',function(){
+            date1 = $(this).val()
+            $('#stToDate').prop('min',date1)
+        })
+    })
+    $(document).ready(function(){
+        var date2 = "";
+        $('#stToDate').on('change',function(){
+            date2 = $(this).val()
+            $('#stFromDate').prop('max',date2)
+        })
+    })
 
 </script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->

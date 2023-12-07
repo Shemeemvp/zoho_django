@@ -22052,7 +22052,6 @@ def transactionsInBetween(request, id):
         except Exception as e:
             print(e)
             return redirect(viewLoanAccount, id)
-
     return redirect('/')    
 
 
@@ -22070,8 +22069,8 @@ def shareLoanAccountStatementToEmail(request,id):
                 account = LoanAccounts.objects.get(id = id)
                 trans = LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id')
                 cmp = company_details.objects.get(user = request.user)
-            
-                context = {'account': account,'transactions':trans}
+
+                context = {'account': account,'transactions':trans,'company':cmp}
                 template_path = 'loan_account_statement_pdf.html'
                 template = get_template(template_path)
 
@@ -22097,8 +22096,8 @@ def loanAccountStatementPdf(request,id):
     if request.user:
         account = LoanAccounts.objects.get(id = id)
         trans = LoanAccountTransactions.objects.filter(loan_account = account).order_by('-id')
-
-        context = {'account': account,'transactions':trans}
+        cmp = company_details.objects.get(user = request.user)
+        context = {'account': account,'transactions':trans,'company':cmp}
     
         
         template_path = 'loan_account_statement_pdf.html'

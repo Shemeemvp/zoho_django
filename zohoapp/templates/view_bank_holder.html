@@ -51,7 +51,7 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Left Side: Table -->
-        <div class="col-md-4" style="background-color: #191c24;">
+        <div class="col-md-4">
             <div class="row">
                 <div class="col-md-12 py-2">
                     <a class="text-white" style="font-size: 1.5rem;">All Banks Holders</a>
@@ -75,7 +75,7 @@
             </div>
         
             <div class="row mt-3">
-                <div class="col-md-12" style= "background-color: #191c24; overflow-y: auto;">
+                <div class="col-md-12" style= "overflow-y: auto;">
                     <table class="table table-responsive text-white" id="table">
                         <thead>
                             <tr>
@@ -119,118 +119,118 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body" style="background-color: rgb(75, 75, 75);">
+                <div class="card-body" style="background-color: #ffddb0">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="row">
-                                <h5 class="text-center text-uppercase">Bank Holder Info</h5>
+                                <h5 class="text-center text-dark text-uppercase">Bank Holder Info</h5>
                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                    <span class="col-4">Name :</span>
-                                    <span class="col-8 text-end fs-4 fw-bold" style="color:#dd9002;">{{holder.holder_name}}</span>
+                                    <span class="col-4 text-dark">Name :</span>
+                                    <span class="col-8 text-end fs-4 fw-bold" style="color:#d0681e;">{{holder.holder_name}}</span>
                                 </div>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <div class="col-12 mt-3 text-dark d-flex justify-content-between align-items-center">
                                     <span>Contact :</span>
                                     <span class="">{{holder.phone_number}}</span>
                                 </div>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <div class="col-12 mt-3 text-dark d-flex justify-content-between align-items-center">
                                     <span>Email :</span>
                                     <span class="">{{holder.email_id}}</span>
                                 </div>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <div class="col-12 mt-3 text-dark d-flex justify-content-between align-items-center">
                                     <span>Acc. Type :</span>
                                     <span class="">{{holder.acc_type}}</span>
                                 </div>
                             </div>
-                            <hr>
+                            <hr style="background-color: black;">
                             <div class="row">
-                                <h5 class="text-center text-uppercase">Tax Registration Details</h5>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <h5 class="text-center text-dark text-uppercase">Tax Registration Details</h5>
+                                <div class="col-12 text-dark mt-3 d-flex justify-content-between align-items-center">
                                     <span>Pan Number :</span>
                                     <span class="">{{holder.pan_number}}</span>
                                 </div>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <div class="col-12 text-dark mt-3 d-flex justify-content-between align-items-center">
                                     <span>Reg. Type :</span>
                                     <span class="">{{holder.registration_type}}</span>
                                 </div>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <div class="col-12 text-dark mt-3 d-flex justify-content-between align-items-center">
                                     <span>GSTIN/UN :</span>
                                     <span class="">{{holder.gstin}}</span>
                                 </div>
                             </div>
-                            <hr>
+                            <hr style="background-color: black;">
                             <div class="row">
-                                <h5 class="text-center text-uppercase">Opening Balance Details</h5>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <h5 class="text-center text-dark text-uppercase">Opening Balance Details</h5>
+                                <div class="col-12 text-dark mt-3 d-flex justify-content-between align-items-center">
                                     <span>Date :</span>
                                     <span class="">{{holder.openbal_date}}</span>
                                 </div>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <div class="col-12 text-dark mt-3 d-flex justify-content-between align-items-center">
                                     <span>Balance Type :</span>
                                     <span class="">{{holder.openbal_type}}</span>
                                 </div>
-                                <div class="col-12 mt-3 d-flex justify-content-between align-items-center">
+                                <div class="col-12 text-dark mt-3 d-flex justify-content-between align-items-center">
                                     <span>Amount :</span>
                                     <span class="">{{holder.openbal_amount}}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card">
+                            <div class="card" style="background-color: rgb(110, 61, 46)">
                                 <div class="card-header d-flex justify-content-center">
                                     <h5 class="m-0">Bank Details</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label for="">Bank Name</label>
-                                        <input type="text" readonly value="{{holder.bank_name}}" class="border-0 w-100 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.bank_name}}" class="border-0 w-100 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                     <div class="form-group">
                                         <label for="">Acc. Number</label>
-                                        <input type="text" readonly value="{{holder.acc_number}}" class="border-0 w-100 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.acc_number}}" class="border-0 w-100 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                     <div class="form-group">
                                         <label for="">Branch</label>
-                                        <input type="text" readonly value="{{holder.branch_name}}" class="border-0 w-100 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.branch_name}}" class="border-0 w-100 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                     <div class="form-group">
                                         <label for="">IFSC Code</label>
-                                        <input type="text" readonly value="{{holder.ifsc_code}}" class="border-0 w-100 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.ifsc_code}}" class="border-0 w-100 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                     <div class="form-group">
                                         <label for="">Swift Code</label>
-                                        <input type="text" readonly value="{{holder.swift_code}}" class="border-0 w-100 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.swift_code}}" class="border-0 w-100 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <hr>
+                    <hr style="background-color: black;">
                     <div class="row">
                         <div class="col-12">
-                            <div class="card">
+                            <div class="card" style="background-color: rgb(110, 61, 46);">
                                 <div class="card-header d-flex justify-content-center">
                                     <h5 class="m-0">Mailing Address</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group d-flex justify-content-between">
                                         <label class="col-4" for="">Mailing Name</label>
-                                        <input type="text" readonly value="{{holder.mail_name}}" class="col-8 border-0 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.mail_name}}" class="col-8 border-0 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                     <div class="form-group d-flex justify-content-between">
                                         <label class="col-4" for="">Address</label>
-                                        <textarea class="col-8 border-0 p-2 text-white text-start" style="background-color: #4b4b4b;" name="" id="" cols="" readonly rows="3">{{holder.mail_address}}</textarea>
+                                        <textarea class="col-8 border-0 p-2 text-white text-start" style="background-color: #8d5747;" name="" id="" cols="" readonly rows="3">{{holder.mail_address}}</textarea>
                                     </div>
                                     <div class="form-group d-flex justify-content-between">
                                         <label class="col-4" for="">Country</label>
-                                        <input type="text" readonly value="{{holder.mail_country}}" class="col-8 border-0 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.mail_country}}" class="col-8 border-0 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                     <div class="form-group d-flex justify-content-between">
                                         <label class="col-4" for="">State</label>
-                                        <input type="text" readonly value="{{holder.mail_state}}" class="col-8 border-0 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.mail_state}}" class="col-8 border-0 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                     <div class="form-group d-flex justify-content-between">
                                         <label class="col-4" for="">Pin</label>
-                                        <input type="text" readonly value="{{holder.mail_pin}}" class="col-8 border-0 py-1 text-white" style="background-color: #4b4b4b;">
+                                        <input type="text" readonly value="{{holder.mail_pin}}" class="col-8 border-0 py-1 text-white" style="background-color: #8d5747;">
                                     </div>
                                 </div>
                             </div>
