@@ -20,9 +20,9 @@
     {% csrf_token %}
     <div class="row mt-5 d-flex justify-content-center">
         <div class="col-sm-8">
-            <div class="from-group">
-                <label for="">Account Name</label>
-                <div class="d-flex">
+            <div class="from-group row">
+                <label for="" class="col-3">Account Name</label>
+                <div class="d-flex col-9">
                     <select class="form-control bg-light text-dark" name="acc_name" id="acc_name" required>
                         <option value="">Choose Bank Holder</option>
                         {% for i in bankHolders %}
@@ -34,110 +34,119 @@
             </div>
         </div>
         <div class="col-sm-8">
-            <div class="from-group mt-3">
-                <label for="">Account Number</label>
-                <input class="form-control text-dark" type="text" name="loan_acc_number" id="loanAccountNumber" readonly>
+            <div class="from-group mt-3 row">
+                <label for="" class="col-3">Account Number</label>
+                <div class="col-9"><input class="form-control text-dark" type="text" name="loan_acc_number" id="loanAccountNumber" readonly></div>
             </div>
         </div>
     </div>
     <div class="row mt-3 d-flex justify-content-center">
         <div class="col-sm-8">
-            <div class="from-group">
-                <label for="">Lender Bank</label>
-                <input class="form-control text-dark" type="text" name="lender_bank" id="lenderBank">
+            <div class="from-group row">
+                <label for="" class="col-3">Lender Bank</label>
+                <div class="col-9"><input class="form-control text-dark" type="text" name="lender_bank" id="lenderBank"></div>
             </div>
-            <div class="from-group mt-3">
-                <label for="">Loan Amount</label>
-                <input class="form-control text-dark" type="number" min="0" step="any" name="loan_amount" id="loanAmount" required>
-            </div>
-        </div>
-        <div class="col-sm-8">
-            <div class="from-group mt-3">
-                <label for="">Description</label>
-                <textarea name="description" class="form-control text-dark" id="description" cols="" rows="4" placeholder="Loan account description.." style="height: 110px;"></textarea>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mt-3 d-flex justify-content-center">
-        <div class="col-sm-8">
-            <div class="from-group">
-                <label for="">Amount Received In</label>
-                <select class="form-control bg-light text-dark" name="amount_received_in" id="AmountReceivedIn">
-                    <option value="Cash">Cash</option>
-                    <option value="Cheque">Cheque</option>
-                    <option value="UPI">UPI</option>
-                    {% for i in banks %}
-                    <option value="{{i.name}}" text="{{i.id}}">{{i.name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="from-group mt-3 amountReceivedInputs" id="amtRcvdAccNum" style="display: none;">
-                <label for="">Account #</label>
-                <input class="form-control text-dark" type="number" name="amt_rcvd_acc_num" id="amt_rcvd_acc_num" readonly>
-            </div>
-            <div class="from-group mt-3 amountReceivedInputs" id="amtRcvdUPI" style="display: none;">
-                <label for="">UPI ID</label>
-                <input class="form-control text-dark" type="text" name="amt_rcvd_upi_id">
-            </div>
-            <div class="from-group mt-3 amountReceivedInputs" id="amtRcvdChequeID" style="display: none;">
-                <label for="">Cheque ID</label>
-                <input class="form-control text-dark" type="text" name="amt_rcvd_cheque_id">
+            <div class="from-group mt-3 row">
+                <label for="" class="col-3">Loan Amount</label>
+                <div class="col-9"><input class="form-control text-dark" type="number" min="0" step="any" name="loan_amount" id="loanAmount" required></div>
             </div>
         </div>
         <div class="col-sm-8">
-            <div class="from-group mt-3">
-                <label for="">Loan Date</label>
-                <input class="form-control text-dark" type="date" value="{% now 'Y-m-d' %}" name="loan_date" id="loanDate">
+            <div class="from-group mt-3 row">
+                <label for="" class="col-3">Description</label>
+                <div class="col-9"><textarea name="description" class="form-control text-dark" id="description" cols="" rows="4" placeholder="Loan account description.." style="height: 110px;"></textarea></div>
             </div>
         </div>
     </div>
 
     <div class="row mt-3 d-flex justify-content-center">
         <div class="col-sm-8">
-            <div class="from-group">
-                <label for="">Interest</label>
-                <input class="form-control text-dark" type="number" min="0" step="any" name="interest_amount" id="interestAmount">
+            <div class="from-group row">
+                <label for="" class="col-3">Amount Received In</label>
+                <div class="col-9">
+                    <select class="form-control bg-light text-dark col-9" name="amount_received_in" id="AmountReceivedIn">
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="UPI">UPI</option>
+                        {% for i in banks %}
+                        <option value="{{i.name}}" text="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-sm-8">
+            <div class="from-group row mt-3 amountReceivedInputs" id="amtRcvdAccNum" style="display: none;">
+                <label for="" class="col-3">Account #</label>
+                <div class="col-9"><input class="form-control text-dark" type="number" name="amt_rcvd_acc_num" id="amt_rcvd_acc_num" readonly></div>
+            </div>
+            <div class="from-group row mt-3 amountReceivedInputs" id="amtRcvdUPI" style="display: none;">
+                <label for="" class="col-3">UPI ID</label>
+                <div class="col-9"><input class="form-control text-dark" type="text" name="amt_rcvd_upi_id"></div>
+            </div>
+            <div class="from-group row mt-3 amountReceivedInputs" id="amtRcvdChequeID" style="display: none;">
+                <label for="" class="col-3">Cheque ID</label>
+                <div class="col-9"><input class="form-control text-dark" type="text" name="amt_rcvd_cheque_id"></div>
+            </div>
+        </div>
+        
+        <div class="col-sm-8">
+            <div class="from-group row mt-3">
+                <label for="" class="col-3">Loan Date</label>
+                <div class="col-9"><input class="form-control text-dark" type="date" value="{% now 'Y-m-d' %}" name="loan_date" id="loanDate"></div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="row mt-3 d-flex justify-content-center">
+        <div class="col-sm-8">
+            <div class="from-group row">
+                <label for="" class="col-3">Interest</label>
+                <div class="col-9"><input class="form-control text-dark" type="number" min="0" step="any" name="interest_amount" id="interestAmount"></div>
             </div>
         </div>
         <div class="col-sm-8">
-            <div class="from-group mt-3">
-                <label for="">Terms Duration</label>
-                <input class="form-control text-dark" type="number" placeholder="Duration in months" name="terms_duration" id="termsDuration">
+            <div class="from-group row mt-3">
+                <label for="" class="col-3">Terms Duration</label>
+                <div class="col-9"><input class="form-control text-dark" type="number" placeholder="Duration in months" name="terms_duration" id="termsDuration"></div>
             </div>
         </div>
     </div>
 
     <div class="row mt-3 d-flex justify-content-center">
         <div class="col-sm-8">
-            <div class="from-group">
-                <label for="">Processing Fee</label>
-                <input class="form-control text-dark" type="number" min="0" step="any" name="procs_fee" id="procsFee">
+            <div class="from-group row">
+                <label for="" class="col-3">Processing Fee</label>
+                <div class="col-9"><input class="form-control text-dark" type="number" min="0" step="any" name="procs_fee" id="procsFee"></div>
             </div>
         </div>
         <div class="col-sm-8">
-            <div class="from-group mt-3">
-                <label for="">Processing Fee Received From</label>
-                <select class="form-control bg-light text-dark" name="procs_fee_received_from" id="procsFeeReceivedFrom">
-                    <option value="Cash">Cash</option>
-                    <option value="Cheque">Cheque</option>
-                    <option value="UPI">UPI</option>
-                    {% for i in banks %}
-                    <option value="{{i.name}}" text="{{i.id}}">{{i.name}}</option>
-                    {% endfor %}
-                </select>
+            <div class="from-group row mt-3">
+                <label for="" class="col-3">Processing Fee Received From</label>
+                <div class="col-9">
+                    <select class="form-control bg-light text-dark" name="procs_fee_received_from" id="procsFeeReceivedFrom">
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="UPI">UPI</option>
+                        {% for i in banks %}
+                        <option value="{{i.name}}" text="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            <div class="from-group mt-3 procsFeeReceivedInputs" id="procsFeeAccNum" style="display: none;">
-                <label for="">Account #</label>
-                <input class="form-control text-dark" type="number" name="procs_fee_acc_num" id="procs_fee_acc_num" readonly>
+            <div class="from-group row mt-3 procsFeeReceivedInputs" id="procsFeeAccNum" style="display: none;">
+                <label for="" class="col-3">Account #</label>
+                <div class="col-9"><input class="form-control text-dark" type="number" name="procs_fee_acc_num" id="procs_fee_acc_num" readonly></div>
             </div>
-            <div class="from-group mt-3 procsFeeReceivedInputs" id="procsFeeUPI" style="display: none;">
-                <label for="">UPI ID</label>
-                <input class="form-control text-dark" type="text" name="procs_fee_upi_id">
+            <div class="from-group row mt-3 procsFeeReceivedInputs" id="procsFeeUPI" style="display: none;">
+                <label for="" class="col-3">UPI ID</label>
+                <div class="col-9"><input class="form-control text-dark" type="text" name="procs_fee_upi_id"></div>
             </div>
-            <div class="from-group mt-3 procsFeeReceivedInputs" id="procsFeeChequeID" style="display: none;">
-                <label for="">Cheque ID</label>
-                <input class="form-control text-dark" type="text" name="procs_fee_cheque_id">
+            <div class="from-group row mt-3 procsFeeReceivedInputs" id="procsFeeChequeID" style="display: none;">
+                <label for="" class="col-3">Cheque ID</label>
+                <div class="col-9"><input class="form-control text-dark" type="text" name="procs_fee_cheque_id"></div>
             </div>
         </div>
     </div>
@@ -1110,7 +1119,7 @@
 
                     success: function(data) {
                         if(data.status){
-                            $('#amtRcvdAccNum').css('display','block');
+                            $('#amtRcvdAccNum').css('display','flex');
                             $('#amt_rcvd_acc_num').val(data.acc_number)
                         }
                         else{
@@ -1126,11 +1135,11 @@
                 }else if(type === 'Cheque'){
                     $('.amountReceivedInputs').css('display','none');
 
-                    $('#amtRcvdChequeID').css('display','block');
+                    $('#amtRcvdChequeID').css('display','flex');
                 }else if(type === 'UPI'){
                     $('.amountReceivedInputs').css('display','none');
 
-                    $('#amtRcvdUPI').css('display','block');
+                    $('#amtRcvdUPI').css('display','flex');
                 }else{
                     $('.amountReceivedInputs').css('display','none');
                 }   
@@ -1155,7 +1164,7 @@
 
                     success: function(data) {
                         if(data.status){
-                            $('#procsFeeAccNum').css('display','block');
+                            $('#procsFeeAccNum').css('display','flex');
                             $('#procs_fee_acc_num').val(data.acc_number);
                         }
                         else{
@@ -1171,11 +1180,11 @@
                 }else if(type === 'Cheque'){
                     $('.procsFeeReceivedInputs').css('display','none');
 
-                    $('#procsFeeChequeID').css('display','block');
+                    $('#procsFeeChequeID').css('display','flex');
                 }else if(type === 'UPI'){
                     $('.procsFeeReceivedInputs').css('display','none');
 
-                    $('#procsFeeUPI').css('display','block');
+                    $('#procsFeeUPI').css('display','flex');
                 }else{
                     $('.procsFeeReceivedInputs').css('display','none');
                 }   

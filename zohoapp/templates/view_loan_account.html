@@ -213,11 +213,19 @@
                                             <td>{{item.interest}}</td>
                                             <td>{{item.total}}</td>
                                             <td>
+                                                {% if item.type != 'Opening Loan' %}
                                                 <a class="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button"><i class="fas fa-ellipsis-v text-white"></i></a>
                                                 <div class="dropdown-menu ">
                                                     <a class="dropdown-item text-white" href="{% url 'editLoanAccountTransaction' item.id %}">Edit</a>
                                                     <a class="dropdown-item text-white" href="{% url 'deleteLoanAccountTransaction' item.id %}" onclick="return confirm('Are you sure you want to delete this transaction.?')">Delete</a>
                                                 </div>
+                                                {% else %}
+                                                <a class="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button"><i class="fas fa-ellipsis-v text-white"></i></a>
+                                                <div class="dropdown-menu ">
+                                                    <a class="dropdown-item text-white" href="javascript:void(0);" onclick="alert('Opening Loan cannot edit here.. Go to edit Loan account section.!')">Edit</a>
+                                                    <a class="dropdown-item text-white" href="javascript:void(0);" onclick="alert('Opening Loan cannot delete here.. Try delete Loan account option.!')">Delete</a>
+                                                </div>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                         {% endfor %}

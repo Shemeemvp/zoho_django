@@ -21706,6 +21706,10 @@ def updateLoanAccount(request,id):
                 # bal = loan_amount+interest
                 status = 'Active'
 
+                new = loan_amount
+                current = account.loan_amount
+                diff = abs(new - current)
+
                 if account.holder.id == int(request.POST['acc_name']):
                     # updating loan amount balance w r t current and new amounts..
                     if account.loan_amount < loan_amount:
@@ -21737,28 +21741,84 @@ def updateLoanAccount(request,id):
                     trans.principal = account.loan_amount
                     trans.interest = account.interest
                     trans.total = account.loan_amount + account.interest
-                    trans.balance = account.balance
+                    if new > current:
+                        trans.balance += diff
+                    else:
+                        trans.balance -= diff
                     trans.save()
 
+                    for i in LoanAccountTransactions.objects.filter(user = request.user, loan_account = account, id__gte = trans.id):
+                        if i.type == 'EMI Paid' or i.type == 'Additional Loan':
+                            if new > current:
+                                i.balance += diff
+                            else:
+                                i.balance -= diff
+                        i.save()
 
                     return redirect(viewLoanAccount,id)
                 else:
-                    # if account name is changed. Checks whether the holder have a Loan account or not, if yes, creates as an additional loan, ohterwiser, creates a new account.
+                    # if account name is changed. Checks whether the holder have a Loan account or not, if yes, alert user, ohterwise, updates account.
                     if not LoanAccounts.objects.filter(user = request.user, holder = BankHolders.objects.get(id = request.POST['acc_name'])).exists():
-                        account = LoanAccounts(
-                            user = User.objects.get(id = request.user.id),holder = holder,acc_name = acc_name, acc_number = acc_number, lender_bank = lender_bank, description = desc,
-                            loan_amount = loan_amount,balance = loan_amount, loan_date = loan_date, amount_received = amt_rcvd ,amt_rcvd_cheque_id = amt_rcvd_cheque_id, amt_rcvd_upi_id = amt_rcvd_upi_id, amt_rcvd_bank_acc_number = amt_rcvd_acc_num,
-                            interest = interest,term_duration = terms, procs_fee = procs_fee,procs_fee_paid_from = procs_fee_paid_from,procs_fee_cheque_id = procs_fee_cheque_id,procs_fee_upi_id = procs_fee_upi_id,procs_fee_bank_acc_number = procs_fee_acc_num, status = status,
-                        )
+                        # account = LoanAccounts(
+                        #     user = User.objects.get(id = request.user.id),holder = holder,acc_name = acc_name, acc_number = acc_number, lender_bank = lender_bank, description = desc,
+                        #     loan_amount = loan_amount,balance = loan_amount, loan_date = loan_date, amount_received = amt_rcvd ,amt_rcvd_cheque_id = amt_rcvd_cheque_id, amt_rcvd_upi_id = amt_rcvd_upi_id, amt_rcvd_bank_acc_number = amt_rcvd_acc_num,
+                        #     interest = interest,term_duration = terms, procs_fee = procs_fee,procs_fee_paid_from = procs_fee_paid_from,procs_fee_cheque_id = procs_fee_cheque_id,procs_fee_upi_id = procs_fee_upi_id,procs_fee_bank_acc_number = procs_fee_acc_num, status = status,
+                        # )
+
+                        # account.save()
+
+                        # #Transaction
+                        # trans = LoanAccountTransactions(
+                        #     user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan', date = date.today(), principal = account.loan_amount, interest = account.interest,
+                        #     total = account.loan_amount + account.interest, balance = account.balance
+                        # )
+                        # trans.save()
+
+
+                        if account.loan_amount < loan_amount:
+                            account.balance += abs(account.loan_amount - loan_amount)
+                        elif account.loan_amount > loan_amount:
+                            account.balance -= abs(account.loan_amount - loan_amount)
+                        account.holder = holder
+                        account.acc_name = acc_name
+                        account.acc_number = acc_number
+                        account.lender_bank = lender_bank
+                        account.description = desc
+                        account.loan_amount = loan_amount
+                        account.loan_date = loan_date
+                        account.amount_received = amt_rcvd
+                        account.amt_rcvd_cheque_id = amt_rcvd_cheque_id
+                        account.amt_rcvd_upi_id = amt_rcvd_upi_id
+                        account.amt_rcvd_bank_acc_number = amt_rcvd_acc_num
+                        account.interest = interest
+                        account.term_duration = terms
+                        account.procs_fee = procs_fee
+                        account.procs_fee_paid_from = procs_fee_paid_from
+                        account.procs_fee_cheque_id = procs_fee_cheque_id
+                        account.procs_fee_upi_id = procs_fee_upi_id
+                        account.procs_fee_bank_acc_number = procs_fee_acc_num
 
                         account.save()
 
                         #Transaction
-                        trans = LoanAccountTransactions(
-                            user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan', date = date.today(), principal = account.loan_amount, interest = account.interest,
-                            total = account.loan_amount + account.interest, balance = account.balance
-                        )
+                        trans = LoanAccountTransactions.objects.get(user = User.objects.get(id = request.user.id), loan_account = account, type = 'Opening Loan')
+                        trans.date = account.loan_date
+                        trans.principal = account.loan_amount
+                        trans.interest = account.interest
+                        trans.total = account.loan_amount + account.interest
+                        if new > current:
+                            trans.balance += diff
+                        else:
+                            trans.balance -= diff
                         trans.save()
+
+                        for i in LoanAccountTransactions.objects.filter(user = request.user, loan_account = account, id__gte = trans.id):
+                            if i.type == 'EMI Paid' or i.type == 'Additional Loan':
+                                if new > current:
+                                    i.balance += diff
+                                else:
+                                    i.balance -= diff
+                            i.save()
 
 
                         return redirect(viewLoanAccount,id)
@@ -21912,6 +21972,9 @@ def updateLoanAccountTransaction(request,id):
             if request.method == 'POST':
                 trans = LoanAccountTransactions.objects.get(id = id)
                 loan_account = LoanAccounts.objects.get(id = trans.loan_account.id)
+                current = float(trans.principal)
+                new = float(request.POST['principal_amount'])
+                diff = abs(float(request.POST['principal_amount']) - float(trans.principal))
 
                 if request.POST['trans_type'] == 'EMI Paid':
                     if float(request.POST['principal_amount']) > trans.principal:
@@ -21930,8 +21993,29 @@ def updateLoanAccountTransaction(request,id):
                 trans.principal = float(request.POST['principal_amount'])
                 trans.interest = float(request.POST['trans_interest'])
                 trans.total = float(request.POST['principal_amount']) + float(request.POST['trans_interest'])
-                trans.balance = loan_account.balance
+                # trans.balance = loan_account.balance
                 trans.save()
+
+                for i in LoanAccountTransactions.objects.filter(user = request.user, loan_account = loan_account, id__gte = id):
+                    if i.type == 'EMI Paid' or i.type == 'Additional Loan':
+                        if new > current and trans.type == 'Additional Loan':
+                            i.balance += diff
+                        elif new < current and trans.type == 'Additional Loan':
+                            i.balance -= diff
+                        elif new > current and trans.type == 'EMI Paid':
+                            i.balance -= diff
+                        elif new < current and trans.type == 'EMI Paid':
+                            i.balance += diff
+                    # elif i.type == 'Additional Loan':
+                    #     if new > current and trans.type == 'Additional Loan':
+                    #         i.balance += diff
+                    #     elif new < current and trans.type == 'Additional Loan':
+                    #         i.balance -= diff
+                    #     elif new > current and trans.type == 'EMI Paid':
+                    #         i.balance -= diff
+                    #     elif new < current and trans.type == 'EMI Paid':
+                    #         i.balance += diff
+                    i.save()
                 
                 return redirect(viewLoanAccount,loan_account.id)
 
@@ -21946,12 +22030,20 @@ def deleteLoanAccountTransaction(request, id):
         try:
             trans = LoanAccountTransactions.objects.get(id = id)
             loan_account = LoanAccounts.objects.get(id = trans.loan_account.id)
+            amt = trans.principal
 
             if trans.type == 'EMI Paid':
                 loan_account.balance += trans.principal
             elif trans.type == 'Opening Loan' or trans.type == 'Additional Loan':
                 loan_account.balance -= trans.principal
             loan_account.save()
+
+            for i in LoanAccountTransactions.objects.filter(user = request.user, loan_account = loan_account, id__gt = id):
+                if trans.type == 'EMI Paid':
+                    i.balance += amt
+                elif trans.type == 'Additional Loan':
+                    i.balance -= amt
+                i.save()
 
             trans.delete()
 
